@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ExploradorArchivoAbrir.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.interfazGrafica</a> &gt; <span class="el_source">ExploradorArchivoAbrir.java</span></div><h1>ExploradorArchivoAbrir.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package unc.fcefyn.lac.tesisCaroFurey.interfazGrafica;
+
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+
+/**
+ * Abre una ventana de exploracion para buscar una archivo de Red de Petri.
+ * @author Caro, Florencia &amp; Furey, Ignacio.
+ */
+public class ExploradorArchivoAbrir {
+	/**
+	 * Objeto JFileChooser, usado para abrir explorador.
+	 */
+	private JFileChooser chooser;
+	/**
+	 * Class constructor. Crea una nueva instancia de JFileChooser
+	 * y la configura.
+	 */
+<span class="nc" id="L24">	public ExploradorArchivoAbrir() {</span>
+		//Creamos selector de apertura
+<span class="nc" id="L26">		this.chooser = new JFileChooser();</span>
+		//Establece el directorio actual del programa java
+		//como directorio actual del explorador
+		//chooser.setCurrentDirectory(new java.io.File(&quot;.&quot;));
+		//Titulo que llevara la ventana
+<span class="nc" id="L31">		this.chooser.setDialogTitle(&quot;Abrir&quot;);</span>
+		//Elegiremos archivos del directorio
+<span class="nc" id="L33">		this.chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);</span>
+		//Agregamos un filtros de extensiones de Redes de Petri
+		//DEBERIAN SETEARSE SEGUN FORMATOS SOPORTADOS
+		//DE HERRAMIENTAPETRINET
+<span class="nc" id="L37">		this.chooser.setFileFilter(</span>
+				new FileNameExtensionFilter(
+						&quot;Petri Net Markup Language - PNML&quot;, &quot;pnml&quot;));
+<span class="nc" id="L40">		this.chooser.setFileFilter(</span>
+				new FileNameExtensionFilter(
+						&quot;Petri Net Markup Language - XML&quot;, &quot;xml&quot;));
+<span class="nc" id="L43">		this.chooser.setFileFilter(</span>
+				new FileNameExtensionFilter(
+						&quot;NDR&quot;, &quot;ndr&quot;));
+<span class="nc" id="L46">		this.chooser.setFileFilter(</span>
+				new FileNameExtensionFilter(
+						&quot;NET&quot;, &quot;net&quot;));
+<span class="nc" id="L49">		this.chooser.setFileFilter(</span>
+				new FileNameExtensionFilter(
+						&quot;Petri Net&quot;, &quot;pnml&quot;, &quot;xml&quot;, &quot;ndr&quot;, &quot;net&quot;));
+<span class="nc" id="L52">		this.chooser.setAcceptAllFileFilterUsed(false);</span>
+<span class="nc" id="L53">	}</span>
+	/**
+	 * Retorna el File seleccionado en el explorador.
+	 * @return archivo seleccionado.
+	 */
+	public File getFile() {
+<span class="nc" id="L59">		File f = null;</span>
+		//analizamos la respuesta
+<span class="nc bnc" id="L61" title="All 4 branches missed.">		switch (this.chooser.showOpenDialog(null)) {</span>
+			case JFileChooser.APPROVE_OPTION:
+				//seleccionó abrir, guarda el archivo
+				//seleccionado en f
+<span class="nc" id="L65">		 		f = this.chooser.getSelectedFile();</span>
+<span class="nc" id="L66">		 		break;</span>
+
+			case JFileChooser.CANCEL_OPTION:
+				//selecciono cancelar o cerro la
+				//ventana, setea f en null
+<span class="nc" id="L71">				f = null;</span>
+<span class="nc" id="L72">				break;</span>
+
+			case JFileChooser.ERROR_OPTION:
+				//Llega aqui si sucede un error, setea f en null
+<span class="nc" id="L76">				f = null;</span>
+<span class="nc" id="L77">				break;</span>
+			default:
+				break;
+		}
+<span class="nc" id="L81">		return f;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

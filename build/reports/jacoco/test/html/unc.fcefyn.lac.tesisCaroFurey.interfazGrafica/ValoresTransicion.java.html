@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValoresTransicion.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.interfazGrafica</a> &gt; <span class="el_source">ValoresTransicion.java</span></div><h1>ValoresTransicion.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.interfazGrafica;
+
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.
+			manejadorProcesos.TransicionProceso;
+
+/**
+ * Clase que contiene los components java swing de una transicion para la
+ * ventana de definicion de procesos.
+ * @author Ignacio
+ *
+ */
+public class ValoresTransicion {
+	/**
+	 * id del hilo seleccionado en la ventana de definicion de procesos.
+	 */
+	private String idHiloActual;
+	/**
+	 * id del hilo que &quot;capturo&quot; la etiqueta de disparo de esta transicion.
+	 */
+	private String idHiloDisparo;
+	/**
+	 * id del hilo que &quot;capturo&quot; la etiqueta de informe de esta transicion.
+	 */
+	private String idHiloInforme;
+	/**
+	 * muestra el id de transicion.
+	 */
+	private JTextField idTransicion;
+	/**
+	 * captura la etiqueta de disparo para el hilo con el mismo id que
+	 * idHiloActual.
+	 */
+	private JCheckBox disparo;
+	/**
+	 * Establece el orden dentro del hilo para el disparo de esta transicion.
+	 */
+	private JComboBox&lt;String&gt; ordenDisparo;
+	/**
+	 * permite al usuario definir un metodo para el disparo de la transicion.
+	 */
+	private JTextField metodoDisparo;
+	/**
+	 * captura la etiqueta de informe para el hilo con el mismo id que
+	 * idHiloActual.
+	 */
+	private JCheckBox informe;
+	/**
+	 * Establece el orden dentro del hilo para el informe de esta transicion.
+	 */
+	private JComboBox&lt;String&gt; ordenInforme;
+	/**
+	 * permite al usuario definir un metodo para el informe de la transicion.
+	 */
+	private JTextField metodoInforme;
+
+	/**
+	 * constructor.
+	 * @param posicionFila posicion en la fila del layout.
+	 * @param panelTransiciones panel donde se colocan los componentes swing.
+	 * @param totalTransicionesRed total de transiciones de la red.
+	 * @param idTransicionActual id de la transicion.
+	 */
+	public ValoresTransicion(final int posicionFila,
+							final JPanel panelTransiciones,
+							final int totalTransicionesRed,
+<span class="fc" id="L76">							final String idTransicionActual) {</span>
+		//inicializo variables.
+<span class="fc" id="L78">		this.idHiloActual = new String(&quot;&quot;);</span>
+<span class="fc" id="L79">		this.idHiloDisparo = new String(&quot;&quot;);</span>
+<span class="fc" id="L80">		this.idHiloInforme = new String(&quot;&quot;);</span>
+		//Creo arreglo para definir los items de los JComboBox
+		final int tamano;
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">		if (totalTransicionesRed &lt; 27) {</span>
+<span class="fc" id="L84">			tamano = totalTransicionesRed * 2;			</span>
+		} else {
+<span class="nc" id="L86">			tamano = totalTransicionesRed + 26;</span>
+		}
+<span class="fc" id="L88">		final String[] comboBoxItems = new String[tamano + 1];</span>
+<span class="fc" id="L89">		comboBoxItems[0] = &quot;&quot;;</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		for (int i = 1; i &lt; totalTransicionesRed + 1; i = i + 1) {</span>
+<span class="fc" id="L91">			comboBoxItems[i] = Integer.toString(i);</span>
+		}
+<span class="fc bfc" id="L93" title="All 2 branches covered.">		for (int i = 1; i &lt; tamano - totalTransicionesRed + 1; i = i + 1) {</span>
+<span class="fc" id="L94">			comboBoxItems[i + totalTransicionesRed] =</span>
+					String.valueOf((char) ('A' + i - 1));
+		}
+
+		//Inicializo variables de java swing
+<span class="fc" id="L99">		this.idTransicion = new JTextField();</span>
+<span class="fc" id="L100">		this.idTransicion.setText(idTransicionActual);</span>
+<span class="fc" id="L101">		this.idTransicion.setEditable(false);</span>
+<span class="fc" id="L102">		this.idTransicion.setColumns(10);</span>
+<span class="fc" id="L103">		final GridBagConstraints gbcIdTransicion = new GridBagConstraints();</span>
+<span class="fc" id="L104">		gbcIdTransicion.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L105">		gbcIdTransicion.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L106">		gbcIdTransicion.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L107">		gbcIdTransicion.gridx = 0;</span>
+<span class="fc" id="L108">		gbcIdTransicion.gridy = posicionFila;</span>
+<span class="fc" id="L109">		panelTransiciones.add(this.idTransicion, gbcIdTransicion);</span>
+
+<span class="fc" id="L111">		this.disparo = new JCheckBox(&quot;&quot;);</span>
+<span class="fc" id="L112">		this.disparo.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent arg0) {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">				if (disparo.isSelected()) {</span>
+<span class="nc" id="L115">					idHiloDisparo = idHiloActual;			</span>
+				} else {
+<span class="nc" id="L117">					idHiloDisparo = &quot;&quot;;</span>
+				}
+<span class="nc" id="L119">			}</span>
+		});
+<span class="fc" id="L121">		final GridBagConstraints gbcDisparo = new GridBagConstraints();</span>
+<span class="fc" id="L122">		gbcDisparo.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L123">		gbcDisparo.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L124">		gbcDisparo.gridx = 1;</span>
+<span class="fc" id="L125">		gbcDisparo.gridy = posicionFila;</span>
+<span class="fc" id="L126">		panelTransiciones.add(this.disparo, gbcDisparo);</span>
+
+<span class="fc" id="L128">		this.ordenDisparo = new JComboBox&lt;String&gt;(comboBoxItems);</span>
+<span class="fc" id="L129">		this.ordenDisparo.setEditable(false);</span>
+<span class="fc" id="L130">		final GridBagConstraints gbcOrdenDisparo = new GridBagConstraints();</span>
+<span class="fc" id="L131">		gbcOrdenDisparo.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L132">		gbcOrdenDisparo.fill = GridBagConstraints.NONE;</span>
+<span class="fc" id="L133">		gbcOrdenDisparo.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L134">		gbcOrdenDisparo.gridx = 2;</span>
+<span class="fc" id="L135">		gbcOrdenDisparo.gridy = posicionFila;</span>
+<span class="fc" id="L136">		panelTransiciones.add(this.ordenDisparo, gbcOrdenDisparo);</span>
+
+<span class="fc" id="L138">		this.metodoDisparo = new JTextField();</span>
+<span class="fc" id="L139">		this.metodoDisparo.setColumns(10);</span>
+<span class="fc" id="L140">		final GridBagConstraints gbcMetodoDisparo = new GridBagConstraints();</span>
+<span class="fc" id="L141">		gbcMetodoDisparo.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L142">		gbcMetodoDisparo.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L143">		gbcMetodoDisparo.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L144">		gbcMetodoDisparo.gridx = 3;</span>
+<span class="fc" id="L145">		gbcMetodoDisparo.gridy = posicionFila;</span>
+<span class="fc" id="L146">		panelTransiciones.add(this.metodoDisparo, gbcMetodoDisparo);</span>
+
+<span class="fc" id="L148">		this.informe = new JCheckBox(&quot;&quot;);</span>
+<span class="fc" id="L149">		this.informe.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent arg0) {
+<span class="nc bnc" id="L151" title="All 2 branches missed.">				if (informe.isSelected()) {</span>
+<span class="nc" id="L152">					idHiloInforme = idHiloActual;			</span>
+				} else {
+<span class="nc" id="L154">					idHiloInforme = &quot;&quot;;</span>
+				}
+<span class="nc" id="L156">			}</span>
+		});
+<span class="fc" id="L158">		final GridBagConstraints gbcInforme = new GridBagConstraints();</span>
+<span class="fc" id="L159">		gbcInforme.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L160">		gbcInforme.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L161">		gbcInforme.gridx = 4;</span>
+<span class="fc" id="L162">		gbcInforme.gridy = posicionFila;</span>
+<span class="fc" id="L163">		panelTransiciones.add(this.informe, gbcInforme);</span>
+
+<span class="fc" id="L165">		this.ordenInforme = new JComboBox&lt;String&gt;(comboBoxItems);</span>
+<span class="fc" id="L166">		this.ordenInforme.setEditable(false);</span>
+<span class="fc" id="L167">		final GridBagConstraints gbcOrdenInforme = new GridBagConstraints();</span>
+<span class="fc" id="L168">		gbcOrdenInforme.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L169">		gbcOrdenInforme.fill = GridBagConstraints.NONE;</span>
+<span class="fc" id="L170">		gbcOrdenInforme.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L171">		gbcOrdenInforme.gridx = 5;</span>
+<span class="fc" id="L172">		gbcOrdenInforme.gridy = posicionFila;</span>
+<span class="fc" id="L173">		panelTransiciones.add(this.ordenInforme, gbcOrdenInforme);</span>
+
+<span class="fc" id="L175">		this.metodoInforme = new JTextField();</span>
+<span class="fc" id="L176">		this.metodoInforme.setColumns(10);</span>
+<span class="fc" id="L177">		final GridBagConstraints gbcMetodoInforme = new GridBagConstraints();</span>
+<span class="fc" id="L178">		gbcMetodoInforme.anchor = GridBagConstraints.NORTH;</span>
+<span class="fc" id="L179">		gbcMetodoInforme.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L180">		gbcMetodoInforme.gridx = 6;</span>
+<span class="fc" id="L181">		gbcMetodoInforme.gridy = posicionFila;</span>
+<span class="fc" id="L182">		panelTransiciones.add(this.metodoInforme, gbcMetodoInforme);</span>
+<span class="fc" id="L183">	}</span>
+	/**
+	 * Setter.
+	 * @param estadoDisparo Estado del disparo en la transición
+	 */
+	public final void setDisparo(final boolean estadoDisparo) {
+<span class="fc" id="L189">		this.disparo.setSelected(estadoDisparo);</span>
+<span class="fc" id="L190">	}</span>
+	/**
+	 * Setter.
+	 * @param ordenDisparoNuevo ordenDisparo a setear
+	 */
+	public final void setOrdenDisparo(final String ordenDisparoNuevo) {
+<span class="fc" id="L196">		this.ordenDisparo.setSelectedItem(ordenDisparoNuevo);</span>
+<span class="fc" id="L197">	}</span>
+	/**
+	 * setter.
+	 * @param metodoDisparoNuevo metodoDisparo a setear
+	 */
+	public final void setMetodoDisparo(final String metodoDisparoNuevo) {
+<span class="fc" id="L203">		this.metodoDisparo.setText(metodoDisparoNuevo);</span>
+<span class="fc" id="L204">	}</span>
+	/**
+	 * setter.
+	 * @param estadoInforme el estado de informe
+	 */
+	public final void setInforme(final boolean estadoInforme) {
+<span class="fc" id="L210">		this.informe.setSelected(estadoInforme);</span>
+<span class="fc" id="L211">	}</span>
+	/**
+	 * Establece el orden de informe si exite.
+	 * @param ordenInformeNuevo ordenInforme a setear
+	 */
+	public final void setOrdenInforme(final String ordenInformeNuevo) {
+<span class="fc" id="L217">		this.ordenInforme.setSelectedItem(ordenInformeNuevo);</span>
+<span class="fc" id="L218">	}</span>
+	/**
+	 * Establece el metodo de informe si ya existe.
+	 * @param metodoInformeNuevo metodoInforme a setear
+	 */
+	public final void setMetodoInforme(final String metodoInformeNuevo) {
+<span class="fc" id="L224">		this.metodoInforme.setText(metodoInformeNuevo);</span>
+<span class="fc" id="L225">	}</span>
+	/**
+	 * setter.
+	 * @param idHiloNuevo idHiloNuevo a setear
+	 */
+	public void setIdHiloActual(final String idHiloNuevo) {
+<span class="fc" id="L231">		this.idHiloActual = idHiloNuevo;</span>
+<span class="fc" id="L232">		this.cambioDeHilo();</span>
+<span class="fc" id="L233">	}</span>
+	/**
+	 * setter.
+	 * @param idHiloDisparoNuevo idHiloDisparo a setear
+	 */
+	public void setIdHiloDisparo(final String idHiloDisparoNuevo) {
+<span class="fc" id="L239">		this.idHiloDisparo = idHiloDisparoNuevo;</span>
+<span class="fc" id="L240">	}</span>
+	/**
+	 * setter.
+	 * @param idHiloInformeNuevo the idHiloInforme to set
+	 */
+	public void setIdHiloInforme(final String idHiloInformeNuevo) {
+<span class="fc" id="L246">		this.idHiloInforme = idHiloInformeNuevo;</span>
+<span class="fc" id="L247">	}</span>
+	/**
+	 * Getter.
+	 * @return idHiloActual
+	 */
+	public String getIdHiloActual() {
+<span class="fc" id="L253">		return this.idHiloActual;</span>
+	}
+	/**
+	 * Getter.
+	 * @return idHiloDisparo
+	 */
+	public String getIdHiloDisparo() {
+<span class="fc" id="L260">		return this.idHiloDisparo;</span>
+	}
+	/**
+	 * Getter.
+	 * @return idHiloInforme
+	 */
+	public String getIdHiloInforme() {
+<span class="fc" id="L267">		return this.idHiloInforme;</span>
+	}
+	/**
+	 * Getter.
+	 * @return idTransicion
+	 */
+	public String getIdTransicion() {
+<span class="fc" id="L274">		return this.idTransicion.getText();</span>
+	}
+	/**
+	 * Getter.
+	 * @return disparo
+	 */
+	public JCheckBox getDisparo() {
+<span class="fc" id="L281">		return this.disparo;</span>
+	}
+	/**
+	 * Getter.
+	 * @return ordenDisparo
+	 */
+	public JComboBox&lt;String&gt; getOrdenDisparo() {
+<span class="fc" id="L288">		return this.ordenDisparo;</span>
+	}
+	/**
+	 * Getter.
+	 * @return metodoDisparo
+	 */
+	public JTextField getMetodoDisparo() {
+<span class="fc" id="L295">		return this.metodoDisparo;</span>
+	}
+	/**
+	 * Getter.
+	 * @return informe
+	 */
+	public JCheckBox getInforme() {
+<span class="fc" id="L302">		return this.informe;</span>
+	}
+	/**
+	 * Getter.
+	 * @return ordenInforme
+	 */
+	public JComboBox&lt;String&gt; getOrdenInforme() {
+<span class="fc" id="L309">		return this.ordenInforme;</span>
+	}
+	/**
+	 * Getter.
+	 * @return metodoInforme
+	 */
+	public JTextField getMetodoInforme() {
+<span class="fc" id="L316">		return this.metodoInforme;</span>
+	}
+	/**
+	 * Establece la visibilidad y valor de los valores de la transición en
+	 * dependencia del hilo actual.
+	 */
+	private void cambioDeHilo() {
+<span class="fc" id="L323">		boolean enable = false;</span>
+<span class="fc" id="L324">		boolean selected = false;</span>
+
+<span class="fc bfc" id="L326" title="All 2 branches covered.">		if (this.idHiloDisparo.equals(&quot;&quot;)) {</span>
+			//Si valores de disparo no estan asignados
+<span class="fc" id="L328">			enable = true;</span>
+<span class="fc" id="L329">			selected = false;</span>
+		} else {
+<span class="fc bfc" id="L331" title="All 2 branches covered.">			if (this.idHiloDisparo.equals(this.idHiloActual)) {</span>
+				//Si valores de disparo ya estan asignados al hilo nuevo
+<span class="fc" id="L333">				enable = true;</span>
+<span class="fc" id="L334">				selected = true;</span>
+			} else {
+				//Si valores de disparo ya estan asignados a otro hilo
+<span class="fc" id="L337">				enable = false;</span>
+<span class="fc" id="L338">				selected = false;</span>
+			}
+		}
+<span class="fc" id="L341">		this.disparo.setEnabled(enable);</span>
+<span class="fc" id="L342">		this.disparo.setSelected(selected);</span>
+<span class="fc" id="L343">		this.ordenDisparo.setEnabled(enable);</span>
+<span class="fc" id="L344">		this.metodoDisparo.setEnabled(enable);</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">		if (this.idHiloInforme.equals(&quot;&quot;)) {</span>
+			//Si valores de disparo no estan asignados
+<span class="fc" id="L347">			enable = true;</span>
+<span class="fc" id="L348">			selected = false;</span>
+		} else {
+<span class="fc bfc" id="L350" title="All 2 branches covered.">			if (this.idHiloInforme.equals(this.idHiloActual)) {</span>
+				//Si valores de disparo ya estan asignados al hilo nuevo
+<span class="fc" id="L352">				enable = true;</span>
+<span class="fc" id="L353">				selected = true;</span>
+			} else {
+				//Si valores de disparo ya estan asignados a otro hilo
+<span class="fc" id="L356">				enable = false;</span>
+<span class="fc" id="L357">				selected = false;</span>
+			}
+		}
+<span class="fc" id="L360">		this.informe.setEnabled(enable);</span>
+<span class="fc" id="L361">		this.informe.setSelected(selected);</span>
+<span class="fc" id="L362">		this.ordenInforme.setEnabled(enable);</span>
+<span class="fc" id="L363">		this.metodoInforme.setEnabled(enable);</span>
+<span class="fc" id="L364">	}</span>
+	/**
+	 * Libera el disparo y/o el informe de esta transición si estos coinciden
+	 * con el idHilo.
+	 * @param idHilo id del hilo que debe liberar disparo y/o informe.
+	 */
+	public void removerHilo(final String idHilo) {
+<span class="pc bpc" id="L371" title="1 of 2 branches missed.">		if (this.idHiloActual.equals(idHilo)) {</span>
+<span class="nc" id="L372">			this.idHiloActual = &quot;&quot;;</span>
+		}
+<span class="fc bfc" id="L374" title="All 2 branches covered.">		if (this.idHiloDisparo.equals(idHilo)) {</span>
+<span class="fc" id="L375">			this.idHiloDisparo = &quot;&quot;;</span>
+		}
+<span class="fc bfc" id="L377" title="All 2 branches covered.">		if (this.idHiloInforme.equals(idHilo)) {</span>
+<span class="fc" id="L378">			this.idHiloInforme = &quot;&quot;;</span>
+		}
+<span class="fc" id="L380">		this.cambioDeHilo();</span>
+<span class="fc" id="L381">	}</span>
+	/**
+	 * Genera una instancia de TransicionProceso segun los valores seteados
+	 * para el hilo dado.
+	 * @param idHilo hilo al cual se le desea generar la transicion.
+	 * @return la instancia de TransicionProceso para ese hilo.
+	 */
+	public TransicionProceso generarTransicionHilo(final String idHilo) {
+<span class="fc" id="L389">		final TransicionProceso tr = new TransicionProceso(</span>
+				this.idTransicion.getText());
+<span class="fc bfc" id="L391" title="All 2 branches covered.">		if (this.idHiloDisparo.equals(idHilo)) {</span>
+<span class="fc" id="L392">			tr.setDisparo(true);</span>
+<span class="fc" id="L393">			tr.setMetodoDisparo(this.metodoDisparo.getText());</span>
+<span class="fc" id="L394">			tr.setOrdenDisparo((String) this.ordenDisparo.getSelectedItem());</span>
+		}
+<span class="fc bfc" id="L396" title="All 2 branches covered.">		if (this.idHiloInforme.equals(idHilo)) {</span>
+<span class="fc" id="L397">			tr.setInforme(true);</span>
+<span class="fc" id="L398">			tr.setMetodoInforme(this.metodoInforme.getText());</span>
+<span class="fc" id="L399">			tr.setOrdenInforme((String) this.ordenInforme.getSelectedItem());</span>
+		}
+<span class="fc" id="L401">		return tr;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

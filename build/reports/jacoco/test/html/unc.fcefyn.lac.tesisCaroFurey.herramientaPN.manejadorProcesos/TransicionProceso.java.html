@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TransicionProceso.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos</a> &gt; <span class="el_source">TransicionProceso.java</span></div><h1>TransicionProceso.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos;
+
+
+/**
+ * Esta clase esta encargada de guardar los datos de una transición específica
+ * relacionada a un proceso.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+public class TransicionProceso {
+	/**
+	 * id de transicion.
+	 */
+	private String idTransicion;
+	/**
+	 *Es igual a true si este proceso controla el informe de esta transicion.
+	 *false de lo contrario.
+	 */
+	private boolean informe;
+	/**
+	 *Es igual a true si este proceso controla el disparo de esta transicion.
+	 *false de lo contrario.
+	 */
+	private boolean disparo;
+	/**
+	 *Almacena el metodo para el informe de esta transicion.
+	 */
+	private String metodoInforme;
+	/**
+	 *Almacena el metodo para el disparo de esta transicion.
+	 */
+	private String metodoDisparo;
+	/**
+	 *Almacena el orden de informe de esta transicion dentro del proceso.
+	 */
+	private String ordenInforme;
+	/**
+	 *Almacena el orden de disparo de esta transicion dentro del proceso.
+	 */
+	private String ordenDisparo;
+	/**
+	 * Constructor.
+	 * @param idTransicionNuevo el id de esta transicion.
+	 */
+<span class="fc" id="L44">	public TransicionProceso(final String idTransicionNuevo) {</span>
+<span class="fc" id="L45">		this.informe = false;</span>
+<span class="fc" id="L46">		this.disparo = false;</span>
+<span class="fc" id="L47">		this.idTransicion = idTransicionNuevo;</span>
+<span class="fc" id="L48">	}</span>
+	/**
+	 * Getter.
+	 * @return the id.
+	 */
+	public String getIdTransicion() {
+<span class="fc" id="L54">		return this.idTransicion;</span>
+	}
+	/**
+	 * Getter.
+	 * @return el informe.
+	 */
+	public boolean getInforme() {
+<span class="fc" id="L61">		return this.informe;</span>
+	}
+	/**
+	 * Setter.
+	 * @param idTransicionNuevo id de la transicion.
+	 */
+	public void setIdTransicion(final String idTransicionNuevo) {
+<span class="nc" id="L68">		this.idTransicion = idTransicionNuevo;</span>
+<span class="nc" id="L69">	}</span>
+	/**
+	 * Setter.
+	 * @param informeNuevo informe de transicion.
+	 */
+	public void setInforme(final boolean informeNuevo) {
+<span class="fc" id="L75">		this.informe = informeNuevo;</span>
+<span class="fc" id="L76">	}</span>
+	/**
+	 * setter.
+	 * @param disparoNuevo disparo de transicion.
+	 */
+	public void setDisparo(final boolean disparoNuevo) {
+<span class="fc" id="L82">		this.disparo = disparoNuevo;</span>
+<span class="fc" id="L83">	}</span>
+
+	/**
+	 * Setter.
+	 * @param metodoInformeNuevo String con el metodo del informe de transicion.
+	 */
+	public void setMetodoInforme(final String metodoInformeNuevo) {
+<span class="fc" id="L90">		this.metodoInforme = metodoInformeNuevo;</span>
+<span class="fc" id="L91">	}</span>
+	/**
+	 * Setter.
+	 * @param metodoDisparoNuevo String con el metodo del disparo de transicion.
+	 */
+	public void setMetodoDisparo(final String metodoDisparoNuevo) {
+<span class="fc" id="L97">		this.metodoDisparo = metodoDisparoNuevo;</span>
+<span class="fc" id="L98">	}</span>
+	/**
+	 * Setter.
+	 * @param ordenInformeNuevo String con el orden del informe de transicion.
+	 */
+	public void setOrdenInforme(final String ordenInformeNuevo) {
+<span class="fc" id="L104">		this.ordenInforme = ordenInformeNuevo;</span>
+<span class="fc" id="L105">	}</span>
+	/**
+	 * Setter.
+	 * @param ordenDisparoNuevo String con el orden del disparo de transicion.
+	 */
+	public void setOrdenDisparo(final String ordenDisparoNuevo) {
+<span class="fc" id="L111">		this.ordenDisparo = ordenDisparoNuevo;</span>
+<span class="fc" id="L112">	}</span>
+	/**
+	 * Retorna el estado del disparo de esta transicion para el proceso.
+	 * @return disparo true si este proceso incluye el pedido de disparo de esta
+	 * transicion.
+	 */
+	public boolean getDisparo() {
+<span class="fc" id="L119">		return this.disparo;</span>
+	}
+	/**
+	 * Getter.
+	 * @return metodoInforme El metodo de informe de la transicion.
+	 */
+	public String getMetodoInforme() {
+<span class="fc" id="L126">		return this.metodoInforme;</span>
+	}
+	/**
+	 * Getter.
+	 * @return metodoDisparo El metodo de disparo de la transicion.
+	 */
+	public String getMetodoDisparo() {
+<span class="fc" id="L133">		return this.metodoDisparo;</span>
+	}
+
+	/**
+	 * Getter.
+	 * @return ordenInforme El orden de informe de la transicion.
+	 */
+	public String getOrdenInforme() {
+<span class="fc" id="L141">		return this.ordenInforme;</span>
+	}
+
+	/**
+	 * Getter.
+	 * @return ordenDisparo El orden de disparo de la transicion.
+	 */
+	public String getOrdenDisparo() {
+<span class="fc" id="L149">		return this.ordenDisparo;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

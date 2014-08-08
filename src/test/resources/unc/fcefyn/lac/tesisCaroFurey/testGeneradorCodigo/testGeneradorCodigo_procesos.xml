@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<definicionProcesos>
+  <net id="net1">
+    <name>
+      <text>nombre de red</text>
+    </name>
+    <process id="Produccion1" runnable="true">
+      <transition id="P1_PtaHno">
+        <informe>
+          <metodo>aMaquina1</metodo>
+          <orden>2</orden>
+        </informe>
+      </transition>
+      <transition id="P1_disponible">
+        <informe>
+          <metodo>aRobot1</metodo>
+          <orden>1</orden>
+        </informe>
+      </transition>
+    </process>
+  <process id="Produccion2" runnable="true">
+      <transition id="t3">
+        <informe>
+          <metodo>aMaquina1</metodo>
+          <orden>2</orden>
+        </informe>
+      </transition>
+      <transition id="t4">
+        <informe>
+          <metodo>aRobot1</metodo>
+          <orden>1</orden>
+        </informe>
+      </transition>
+    </process>
+  <process id="Robot1" runnable="false">
+      <transition id="t3">
+        <disparo>
+          <metodo>terminaProd2</metodo>
+          <orden/>
+        </disparo>
+      </transition>
+      <transition id="P1_PtaHno">
+        <disparo>
+          <metodo>terminaProd1</metodo>
+          <orden/>
+        </disparo>
+      </transition>
+    </process>
+  <process id="Maquina1" runnable="false">
+      <transition id="t5">
+        <disparo>
+          <metodo>terminaProd2</metodo>
+          <orden/>
+        </disparo>
+      </transition>
+      <transition id="P1_SalidaHno">
+        <disparo>
+          <metodo>terminaProd1</metodo>
+          <orden/>
+        </disparo>
+      </transition>
+    </process>
+  </net>
+</definicionProcesos>

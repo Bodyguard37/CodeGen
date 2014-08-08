@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ExploradorCarpeta.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.interfazGrafica</a> &gt; <span class="el_source">ExploradorCarpeta.java</span></div><h1>ExploradorCarpeta.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.interfazGrafica;
+
+import java.io.File;
+import javax.swing.JFileChooser;
+
+
+/**
+ * Abre una ventana de exploracion para buscar un path de Directorio.
+ * @author Caro, Florencia &amp; Furey, Ignacio.
+ */
+public class ExploradorCarpeta {
+	/**
+	 * Objeto JFileChooser, usado para abrir explorador.
+	 */
+	private JFileChooser chooser;
+	/**
+	 * Class constructor. Crea una nueva instancia de JFileChooser.
+	 * y la configura.
+	 */
+<span class="nc" id="L20">	public ExploradorCarpeta() {</span>
+		//Creamos selector de apertura
+<span class="nc" id="L22">		this.chooser = new JFileChooser();</span>
+		//Establece el directorio actual del programa java
+		//como directorio actual del explorador
+		//chooser.setCurrentDirectory(new java.io.File(&quot;.&quot;));
+		//Titulo que llevara la ventana
+<span class="nc" id="L27">		this.chooser.setDialogTitle(&quot;Seleccionar directorio&quot;);</span>
+		//Elegiremos archivos del directorio
+<span class="nc" id="L29">		this.chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);</span>
+<span class="nc" id="L30">	}</span>
+	/**
+	 * Retorna el File seleccionado en el explorador.
+	 * @return archivo seleccionado.
+	 */
+	public File getPath() {
+<span class="nc" id="L36">		File f = null;</span>
+		//analizamos la respuesta
+<span class="nc bnc" id="L38" title="All 4 branches missed.">		switch (this.chooser.showOpenDialog(null)) {</span>
+			case JFileChooser.APPROVE_OPTION:
+				//seleccionó abrir, guarda el archivo
+				//seleccionado en f
+<span class="nc" id="L42">		 		f = this.chooser.getSelectedFile();</span>
+<span class="nc" id="L43">		 		break;</span>
+			case JFileChooser.CANCEL_OPTION:
+				//selecciono cancelar o cerro la
+				//ventana, setea f en null
+<span class="nc" id="L47">				f = null;</span>
+<span class="nc" id="L48">				break;</span>
+			case JFileChooser.ERROR_OPTION:
+				//Llega aqui si sucede un error, setea f en null
+<span class="nc" id="L51">				f = null;</span>
+<span class="nc" id="L52">				break;</span>
+			default:
+				break;
+		}
+<span class="nc" id="L56">		return f;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

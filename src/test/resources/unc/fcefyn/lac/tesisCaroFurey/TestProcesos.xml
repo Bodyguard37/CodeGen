@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<definicionProcesos>
+  <net id="net1">
+    <name>
+      <text>Ejemplo2hilos</text>
+    </name>
+    <process id="Produccion1">
+     	<transition id="t0">
+			<informe>
+				<metodo>CArlos</metodo>
+				<orden>2</orden>
+			</informe>
+		</transition>
+		<transition id="t1">
+			<disparo>
+				<metodo>Flopy</metodo>
+				<orden>3</orden>
+			</disparo>
+			<informe>
+				<metodo>Julian</metodo>
+				<orden>4</orden>
+			</informe>
+		</transition>
+		<transition id="t2">
+			<disparo>
+				<metodo>Pedro</metodo>
+				<orden>5</orden>
+			</disparo>
+			<informe>
+				<metodo>Lau</metodo>
+				<orden>6</orden>
+			</informe>
+		</transition>
+    </process>
+	<process id="Produccion2">
+		<transition id="tA">
+		</transition>
+    </process>
+  
+  <process id="este no es juan">
+      <transition id="trnew">
+        <disparo>
+          <metodo>metodod</metodo>
+          <orden>3</orden>
+        </disparo>
+      </transition>
+      <transition id="sdf">
+        <informe>
+          <metodo>sadfsadf</metodo>
+          <orden>34</orden>
+        </informe>
+      </transition>
+      <transition id="trnegogogoasdfw">
+        <disparo>
+          <metodo>metosdfdod</metodo>
+          <orden>3</orden>
+        </disparo>
+        <informe>
+          <metodo>saasdfdfsadf</metodo>
+          <orden>34</orden>
+        </informe>
+      </transition>
+    </process>
+  </net>
+</definicionProcesos>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GeneradorHilosJava.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.generacionCodigo</a> &gt; <span class="el_source">GeneradorHilosJava.java</span></div><h1>GeneradorHilosJava.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.generacionCodigo;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.AbstractHerramientaPN;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorEtiquetas.Etiqueta;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.Proceso;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.
+		TransicionProceso;
+
+/**
+ * Se encarga de escribir el archivo de código fuente de las clases de los procesos
+ * ``runnable'' del código generado, según los procesos ``runnable'' definidos
+ * previamente por el  usuario en la herramienta.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+public class GeneradorHilosJava {
+	/**
+	 * hiloFile archivo de codigo de cada hilo.
+	 */
+	private File hiloFile;
+	/**
+	 * Buffer para escritura de archivo.
+	 */
+    private BufferedWriter bw;
+    /**
+     * En esta variable se irán generando los metodos de las transiciones que
+     * contenga este hilo y se escribiran en el archivo al final.
+     */
+    private String metodosTransiciones;
+	/**
+	 * Class Constructor.
+	 * @param proceso proceso del cual hay que generar el codigo.
+	 * @param datos AbstractHerramientaPN con los datos de la red.
+	 * @param filePath path de archivos.
+	 */
+	public GeneradorHilosJava(final Proceso proceso,
+			final AbstractHerramientaPN datos,
+<span class="fc" id="L45">			final String filePath) {</span>
+
+<span class="fc" id="L47">		this.metodosTransiciones = &quot;&quot;;</span>
+<span class="fc" id="L48">		final String hiloFilePath =</span>
+				filePath.concat(&quot;\\&quot; + proceso.getId() + &quot;.java&quot;);
+
+		try {
+<span class="fc" id="L52">			this.hiloFile = new File(hiloFilePath);</span>
+<span class="fc" id="L53">			this.hiloFile.createNewFile();</span>
+<span class="fc" id="L54">			this.bw = new BufferedWriter(new FileWriter(this.hiloFile));</span>
+<span class="nc" id="L55">		} catch (java.io.IOException e) {</span>
+<span class="nc" id="L56">			e.printStackTrace();</span>
+<span class="fc" id="L57">		}</span>
+<span class="fc" id="L58">        escribirCabecera(proceso);</span>
+<span class="fc" id="L59">        escribirConstantesTransicion(</span>
+        		datos.getTransiciones(), proceso.getTransiciones());
+<span class="fc" id="L61">        escribirMetodosFijos(proceso.getId());</span>
+<span class="fc" id="L62">        escribirMetodoRun(proceso.getTransiciones(), datos.getEtiquetas());</span>
+<span class="fc" id="L63">		escribirMetodosTransiciones();</span>
+        try {
+			//Se cierra la clase.
+<span class="fc" id="L66">        	this.bw.write(&quot;}&quot;);</span>
+<span class="fc" id="L67">        	this.bw.newLine();</span>
+<span class="fc" id="L68">        	this.bw.close();</span>
+<span class="nc" id="L69">		} catch (java.io.IOException e) {</span>
+<span class="nc" id="L70">			e.printStackTrace();</span>
+<span class="fc" id="L71">		}</span>
+<span class="fc" id="L72">	}</span>
+	/**
+	 * Escribe la cabecera del hilo.
+	 * @param proceso instancia de Proceso con los datos del hilo.
+	 */
+	private void escribirCabecera(final Proceso proceso) {
+		try {
+			//Se escribe el nombre package de la clase
+<span class="fc" id="L80">			this.bw.write(&quot;package procesos;\n\n&quot;);</span>
+			//Se importa el procesador que ejecuta la red.
+<span class="fc" id="L82">			this.bw.write(&quot;import procesador.ProcesadorPetri;\n\n&quot;);</span>
+			//Se escribe la definicion de clase
+<span class="fc" id="L84">			this.bw.write(&quot;public class &quot; + proceso.getId() +</span>
+					&quot; implements Runnable {&quot;);
+<span class="fc" id="L86">			this.bw.newLine();</span>
+			//Se declara la variable del procesador.
+<span class="fc" id="L88">			this.bw.write(&quot;\tprivate ProcesadorPetri procesador;&quot;);</span>
+<span class="fc" id="L89">			this.bw.newLine();</span>
+<span class="nc" id="L90">		} catch (IOException e) {</span>
+<span class="nc" id="L91">			e.printStackTrace();</span>
+<span class="fc" id="L92">		}</span>
+<span class="fc" id="L93">	}</span>
+	/**
+	 * Escribe en archivo las constantes con los datos de la transicion.
+	 * @param transicionesRed datos de las trancisiones de la red.
+	 * @param transicionesProceso datos de las transiciones del proceso.
+	 */
+	private void escribirConstantesTransicion(
+		final HashMap&lt;String, Integer&gt; transicionesRed,
+		final ArrayList&lt;TransicionProceso&gt; transicionesProceso) {
+
+<span class="fc" id="L103">		final Iterator&lt;TransicionProceso&gt; it = transicionesProceso.iterator();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		while (it.hasNext()) {</span>
+<span class="fc" id="L105">			final TransicionProceso transicionActual = it.next();</span>
+<span class="fc" id="L106">			final int columna = transicionesRed.get(</span>
+					transicionActual.getIdTransicion()).intValue();
+			try {
+				//Se escribe el nombre de la transicion como constante igualada
+				//al numero de columna de la matriz que le corresponde.
+<span class="fc" id="L111">				this.bw.write(&quot;\tprivate static final int &quot; +</span>
+						transicionActual.getIdTransicion() +
+						&quot; = &quot; + columna + &quot;;&quot;);
+<span class="fc" id="L114">				this.bw.newLine();</span>
+<span class="nc" id="L115">			} catch (IOException e) {</span>
+<span class="nc" id="L116">				e.printStackTrace();</span>
+<span class="fc" id="L117">			}</span>
+<span class="fc" id="L118">		}</span>
+<span class="fc" id="L119">	}</span>
+	/**
+	 * Escribe metodos que no varian entre diferentes hilos de la red.
+	 * @param idProceso id de proceso.
+	 */
+	private void escribirMetodosFijos(final String idProceso) {
+		try {
+<span class="fc" id="L126">			this.bw.newLine();</span>
+<span class="fc" id="L127">			this.bw.write(&quot;\tpublic &quot; + idProceso +</span>
+					&quot;(ProcesadorPetri procesadorPN) {&quot;);
+<span class="fc" id="L129">			this.bw.newLine();</span>
+<span class="fc" id="L130">			this.bw.write(&quot;\t\tthis.procesador = procesadorPN;&quot;);</span>
+<span class="fc" id="L131">			this.bw.newLine();</span>
+<span class="fc" id="L132">			this.bw.write(&quot;\t}&quot;);</span>
+<span class="fc" id="L133">			this.bw.newLine();</span>
+<span class="fc" id="L134">			this.bw.write(&quot;\tprivate void consultar(int transicion) {\n&quot; +</span>
+				&quot;\t\twhile (!procesador.consultarDisparoTransicion(&quot; +
+				&quot;\t\t\ttransicion));\n&quot; +
+				&quot;\t}&quot;);
+<span class="fc" id="L138">			this.bw.newLine();</span>
+<span class="fc" id="L139">			this.bw.write(&quot;\tprivate void disparar(int transicion) {\n&quot; +</span>
+				&quot;\t\tprocesador.encolar(0, transicion);\n&quot; +
+				&quot;\t}&quot;);
+<span class="fc" id="L142">			this.bw.newLine();</span>
+<span class="nc" id="L143">		} catch (IOException e) {</span>
+<span class="nc" id="L144">			e.printStackTrace();</span>
+<span class="fc" id="L145">		}</span>
+<span class="fc" id="L146">	}</span>
+	/**
+	 * Escribe el metodo run para el hilo.
+	 * @param transicionesProceso transiciones del proceso.
+	 * @param etiquetasRed etiquetas de las transiciones de la red.
+	 */
+	private void escribirMetodoRun(
+			final ArrayList&lt;TransicionProceso&gt; transicionesProceso,
+			final ArrayList&lt;Etiqueta&gt; etiquetasRed) {
+		try {
+			//Escribe cabecera del metodo.
+<span class="fc" id="L157">			this.bw.write(&quot;\tpublic void run() {\n&quot;);</span>
+<span class="fc" id="L158">			escrituraTransicionesExtraWhile(</span>
+					transicionesProceso, etiquetasRed);
+<span class="fc" id="L160">			this.bw.write(&quot;\t\t//Continuamente ejecuta las transiciones.\n&quot; +</span>
+					&quot;\t\twhile (true) {&quot;);
+<span class="fc" id="L162">			this.bw.newLine();</span>
+<span class="fc" id="L163">			escrituraTransicionesIntraWhile(</span>
+					transicionesProceso, etiquetasRed);
+<span class="fc" id="L165">			this.bw.write(&quot;\t\t}\n\t}\n&quot;);</span>
+
+<span class="nc" id="L167">		} catch (IOException e) {</span>
+<span class="nc" id="L168">			e.printStackTrace();</span>
+<span class="fc" id="L169">		}</span>
+<span class="fc" id="L170">	}</span>
+	/**
+	 * Escribe los disparos e informes de las transiciones dentro del while del
+	 * metodo run.
+	 * @param transicionesProceso transiciones del proceso.
+	 * @param etiquetasRed etiquetas de las transiciones de la red.
+	 */
+	private void escrituraTransicionesIntraWhile(
+			final ArrayList&lt;TransicionProceso&gt; transicionesProceso,
+			final ArrayList&lt;Etiqueta&gt; etiquetasRed) {
+		//Revisa transicion por transicion para todos los ordenes posibles.
+<span class="fc" id="L181">		for (int orden = 1;</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">				orden &lt;= (transicionesProceso.size() * 2);</span>
+<span class="fc" id="L183">				orden = orden + 1) {</span>
+			//itera para todas las transiciones.
+<span class="fc" id="L185">			final Iterator&lt;TransicionProceso&gt; it =</span>
+					transicionesProceso.iterator();
+<span class="fc bfc" id="L187" title="All 2 branches covered.">			while (it.hasNext()) {</span>
+<span class="fc" id="L188">				final TransicionProceso trActual = it.next();</span>
+				//Obtengo el id de transicion.
+<span class="fc" id="L190">				final String idTransicion = trActual.getIdTransicion();</span>
+				//Obtiene el indice de las etiquetas de esta transicion en el
+				//array de etiquetasRed.
+				int indice;
+<span class="pc bpc" id="L194" title="1 of 4 branches missed.">				for (indice = 0; indice &lt; etiquetasRed.size() &amp;&amp;</span>
+						!etiquetasRed.get(indice).getIdTransicion().
+<span class="fc" id="L196">						equals(idTransicion); indice = indice + 1) { }</span>
+				//Controla y escribe Disparo de transicion.
+<span class="fc" id="L198">				final String sOrden = Integer.toString(orden);</span>
+<span class="fc bfc" id="L199" title="All 4 branches covered.">				if (trActual.getDisparo() &amp;&amp; trActual.getOrdenDisparo().</span>
+						equals(sOrden)) {
+<span class="fc bfc" id="L201" title="All 2 branches covered.">					if (etiquetasRed.get(indice).getPrimerValor().equals(&quot;A&quot;)) {</span>
+						try {
+<span class="fc" id="L203">							this.bw.write(&quot;\t\t\t\t//Transicion &quot; + idTransicion +</span>
+									&quot; con disparo Automatico.&quot;);
+<span class="fc" id="L205">							this.bw.newLine();</span>
+<span class="nc" id="L206">						} catch (IOException e) {</span>
+<span class="nc" id="L207">							e.printStackTrace();</span>
+<span class="pc" id="L208">						}</span>
+					} else {
+						try {
+<span class="fc" id="L211">							this.bw.write(&quot;\t\t\t//ejecucion disparo transicion &quot; +</span>
+									idTransicion + &quot;\n\t\t\ttry {&quot;);
+<span class="fc" id="L213">							this.bw.newLine();</span>
+<span class="fc" id="L214">							this.bw.write(&quot;\t\t\t\tdisparar(&quot; + idTransicion +</span>
+									&quot;);\n&quot; +
+									&quot;\t\t\t\t&quot; + trActual.getMetodoDisparo() +
+									&quot;();&quot;);
+<span class="fc" id="L218">							this.bw.newLine();</span>
+<span class="fc" id="L219">							this.bw.write(&quot;\t\t\t} catch (Exception e) {\n&quot; +</span>
+									&quot;\t\t\t\te.printStackTrace();\n&quot; +
+									&quot;\t\t\t}&quot;);
+<span class="fc" id="L222">							this.bw.newLine();</span>
+<span class="fc" id="L223">							guardarMetodoTransicion(idTransicion,</span>
+									trActual.getMetodoDisparo(), &quot;disparo&quot;);
+<span class="nc" id="L225">						} catch (IOException e) {</span>
+<span class="nc" id="L226">							e.printStackTrace();</span>
+<span class="fc" id="L227">						}</span>
+					}
+				}
+				//Controla y escribe Informe de transicion.
+<span class="pc bpc" id="L231" title="1 of 4 branches missed.">				if (trActual.getInforme() &amp;&amp; trActual.getOrdenInforme().</span>
+						equals(Integer.toString(orden))) {
+<span class="fc bfc" id="L233" title="All 2 branches covered.">					if (etiquetasRed.get(indice).</span>
+							getSegundoValor().equals(&quot;N&quot;)) {
+						try {
+<span class="fc" id="L236">							this.bw.write(&quot;\t\t\t\t//Transicion &quot; + idTransicion +</span>
+									&quot; sin Informe de disparo.&quot;);
+<span class="fc" id="L238">							this.bw.newLine();</span>
+<span class="nc" id="L239">						} catch (IOException e) {</span>
+<span class="nc" id="L240">							e.printStackTrace();</span>
+<span class="pc" id="L241">						}</span>
+					} else {
+						try {
+<span class="fc" id="L244">							this.bw.write(&quot;\t\t\t//ejecucion informe transicion &quot; +</span>
+									idTransicion + &quot;\n\t\t\ttry {&quot;);
+<span class="fc" id="L246">							this.bw.newLine();</span>
+<span class="fc" id="L247">							this.bw.write(&quot;\t\t\t\tconsultar(&quot; + idTransicion +</span>
+									&quot;);\n&quot; +
+									&quot;\t\t\t\t&quot; + trActual.getMetodoInforme() +
+									&quot;();&quot;);
+<span class="fc" id="L251">							this.bw.newLine();</span>
+<span class="fc" id="L252">							this.bw.write(&quot;\t\t\t} catch (Exception e) {\n&quot; +</span>
+									&quot;\t\t\t\te.printStackTrace();\n&quot; +
+									&quot;\t\t\t}&quot;);
+<span class="fc" id="L255">							this.bw.newLine();</span>
+<span class="fc" id="L256">							guardarMetodoTransicion(idTransicion,</span>
+									trActual.getMetodoInforme(), &quot;informe&quot;);
+<span class="nc" id="L258">						} catch (IOException e) {</span>
+<span class="nc" id="L259">							e.printStackTrace();</span>
+<span class="fc" id="L260">						}</span>
+					}
+				}
+<span class="fc" id="L263">			}</span>
+		}
+<span class="fc" id="L265">	}</span>
+	/**
+	 * Escribe los disparos e informes de las transiciones fuera del while del
+	 * metodo run. Estas conformarian las precondiciones del hilo.
+	 * @param transicionesProceso transiciones del proceso.
+	 * @param etiquetasRed etiquetas de las transiciones de la red.
+	 */
+	private void escrituraTransicionesExtraWhile(
+			final ArrayList&lt;TransicionProceso&gt; transicionesProceso,
+			final ArrayList&lt;Etiqueta&gt; etiquetasRed) {
+		//Revisa transicion por transicion para todos los ordenes posibles.
+<span class="fc" id="L276">		for (int orden = 1;</span>
+<span class="pc bpc" id="L277" title="1 of 4 branches missed.">				orden &lt;= (transicionesProceso.size() * 2) &amp;&amp;</span>
+<span class="fc" id="L278">						orden &lt;= 26; orden = orden + 1) {</span>
+			//itera para todas las transiciones.
+<span class="fc" id="L280">			final Iterator&lt;TransicionProceso&gt; it =</span>
+					transicionesProceso.iterator();
+<span class="fc bfc" id="L282" title="All 2 branches covered.">			while (it.hasNext()) {</span>
+<span class="fc" id="L283">				final TransicionProceso trActual = it.next();</span>
+				//Obtengo el id de transicion.
+<span class="fc" id="L285">				final String idTransicion = trActual.getIdTransicion();</span>
+				//Obtiene el indice de las etiquetas de esta transicion en el
+				//array de etiquetasRed.
+				int indice;
+<span class="pc bpc" id="L289" title="1 of 4 branches missed.">				for (indice = 0; indice &lt; etiquetasRed.size() &amp;&amp;</span>
+						!etiquetasRed.get(indice).getIdTransicion().
+<span class="fc" id="L291">						equals(idTransicion); indice = indice + 1) { }</span>
+				//Controla y escribe Disparo de transicion.
+<span class="fc" id="L293">				final String sOrden = String.valueOf((char) ('A' + (orden - 1)));</span>
+<span class="fc bfc" id="L294" title="All 4 branches covered.">				if (trActual.getDisparo() &amp;&amp; trActual.getOrdenDisparo().</span>
+						equals(sOrden)) {
+<span class="fc bfc" id="L296" title="All 2 branches covered.">					if (etiquetasRed.get(indice).getPrimerValor().equals(&quot;A&quot;)) {</span>
+						try {
+<span class="fc" id="L298">							this.bw.write(&quot;\t\t\t\t//Transicion &quot; + idTransicion +</span>
+									&quot; con disparo Automatico.&quot;);
+<span class="fc" id="L300">							this.bw.newLine();</span>
+<span class="nc" id="L301">						} catch (IOException e) {</span>
+<span class="nc" id="L302">							e.printStackTrace();</span>
+<span class="pc" id="L303">						}</span>
+					} else {
+						try {
+<span class="fc" id="L306">							this.bw.write(&quot;\t\t\t//ejecucion disparo transicion &quot; +</span>
+									idTransicion + &quot;\n\t\t\ttry {&quot;);
+<span class="fc" id="L308">							this.bw.newLine();</span>
+<span class="fc" id="L309">							this.bw.write(&quot;\t\t\t\tdisparar(&quot; + idTransicion +</span>
+									&quot;);\n&quot; +
+									&quot;\t\t\t\t&quot; + trActual.getMetodoDisparo() +
+									&quot;();&quot;);
+<span class="fc" id="L313">							this.bw.newLine();</span>
+<span class="fc" id="L314">							this.bw.write(&quot;\t\t\t} catch (Exception e) {\n&quot; +</span>
+									&quot;\t\t\t\te.printStackTrace();\n&quot; +
+									&quot;\t\t\t}&quot;);
+<span class="fc" id="L317">							this.bw.newLine();</span>
+<span class="fc" id="L318">							guardarMetodoTransicion(idTransicion,</span>
+									trActual.getMetodoDisparo(), &quot;disparo&quot;);
+<span class="nc" id="L320">						} catch (IOException e) {</span>
+<span class="nc" id="L321">							e.printStackTrace();</span>
+<span class="fc" id="L322">						}</span>
+					}
+				}
+				//Controla y escribe Informe de transicion.
+<span class="pc bpc" id="L326" title="1 of 4 branches missed.">				if (trActual.getInforme() &amp;&amp; trActual.getOrdenInforme().</span>
+						equals(sOrden)) {
+<span class="fc bfc" id="L328" title="All 2 branches covered.">					if (etiquetasRed.get(indice).</span>
+							getSegundoValor().equals(&quot;N&quot;)) {
+						try {
+<span class="fc" id="L331">							this.bw.write(&quot;\t\t\t\t//Transicion &quot; + idTransicion +</span>
+									&quot; sin Informe de disparo.&quot;);
+<span class="fc" id="L333">							this.bw.newLine();</span>
+<span class="nc" id="L334">						} catch (IOException e) {</span>
+<span class="nc" id="L335">							e.printStackTrace();</span>
+<span class="pc" id="L336">						}</span>
+					} else {
+						try {
+<span class="fc" id="L339">							this.bw.write(&quot;\t\t\t//ejecucion informe transicion &quot; +</span>
+									idTransicion + &quot;\n\t\t\ttry {&quot;);
+<span class="fc" id="L341">							this.bw.newLine();</span>
+<span class="fc" id="L342">							this.bw.write(&quot;\t\t\t\tconsultar(&quot; + idTransicion +</span>
+									&quot;);\n&quot; +
+									&quot;\t\t\t\t&quot; + trActual.getMetodoInforme() +
+									&quot;();&quot;);
+<span class="fc" id="L346">							this.bw.newLine();</span>
+<span class="fc" id="L347">							this.bw.write(&quot;\t\t\t} catch (Exception e) {\n&quot; +</span>
+									&quot;\t\t\t\te.printStackTrace();\n&quot; +
+									&quot;\t\t\t}&quot;);
+<span class="fc" id="L350">							this.bw.newLine();</span>
+<span class="fc" id="L351">							guardarMetodoTransicion(idTransicion,</span>
+									trActual.getMetodoInforme(), &quot;informe&quot;);
+<span class="nc" id="L353">						} catch (IOException e) {</span>
+<span class="nc" id="L354">							e.printStackTrace();</span>
+<span class="fc" id="L355">						}</span>
+					}
+				}
+<span class="fc" id="L358">			}</span>
+		}
+<span class="fc" id="L360">	}</span>
+	/**
+	 * Escribe los metodos de las transiciones que fueron guardados en la
+	 * variable metodosTransiciones.
+	 */
+	private void escribirMetodosTransiciones() {
+		try {
+<span class="fc" id="L367">			this.bw.write(this.metodosTransiciones);</span>
+<span class="nc" id="L368">		} catch (IOException e) {</span>
+<span class="nc" id="L369">			e.printStackTrace();</span>
+<span class="fc" id="L370">		}</span>
+<span class="fc" id="L371">	}</span>
+	/**
+	 * Guarda un nuevo metodo de una transicion en la variable
+	 * metodosTransiciones.
+	 * @param idTransicion id de la transicion.
+	 * @param nombreMetodo nombre del metodo.
+	 * @param infDis indica si el metodo a escribir es de informe o disparo.
+	 */
+	private void guardarMetodoTransicion(final String idTransicion,
+			final String nombreMetodo, final String infDis) {
+
+<span class="fc" id="L382">		this.metodosTransiciones = this.metodosTransiciones.concat(</span>
+				&quot;\t//metodo de &quot; + infDis + &quot; de transicion &quot; +
+				idTransicion + &quot;.\n&quot;);
+<span class="fc" id="L385">		this.metodosTransiciones = this.metodosTransiciones.concat(</span>
+				&quot;\tprivate void &quot; + nombreMetodo + &quot;() {\n&quot;);
+<span class="fc" id="L387">		this.metodosTransiciones = this.metodosTransiciones.concat(</span>
+				&quot;\t\t//TODO realizar aqui las tareas concernientes al &quot; +
+				infDis + &quot; de la transicion &quot; +	idTransicion + &quot;.\n\t}\n&quot;);
+<span class="fc" id="L390">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

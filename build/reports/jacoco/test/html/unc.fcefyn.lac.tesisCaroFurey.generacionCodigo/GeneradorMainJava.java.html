@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GeneradorMainJava.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.generacionCodigo</a> &gt; <span class="el_source">GeneradorMainJava.java</span></div><h1>GeneradorMainJava.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package unc.fcefyn.lac.tesisCaroFurey.generacionCodigo;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.AbstractHerramientaPN;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.Proceso;
+
+/**
+ * Clase que genera el código fuente del archivo Main del proyecto generado.
+ * Solo se debe generar una nueva instancia con los parametros requeridos y
+ * genera el archivo .java en el directorio indicado.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ *
+ */
+public class GeneradorMainJava {
+	/**
+	 * Archivo Main del sistema.
+	 */
+	private File mainFile;
+	/**
+	 * Buffer de escritura para archivo fuente generado.
+	 */
+    private BufferedWriter bw;
+    /**
+     * Constructor. Obtiene información relevante de datos para generar el
+     * código fuente de la clase Main del proyecto generado.
+     * @param filePath path del directorio donde se generará el archivo Main.
+     * @param datos instancia de AbstractHerramientaPN con los datos ya
+     * cargados de la red de la cual se desea generar el código.
+     * @param configFilePath path del archivo de configuración del procesador
+     * de petri con los datos de la red.
+     */
+	public GeneradorMainJava(final String filePath,
+			final AbstractHerramientaPN datos,
+<span class="fc" id="L43">			final String configFilePath) {</span>
+
+<span class="fc" id="L45">		final String mainFilePath = filePath.concat(&quot;\\Main.java&quot;);</span>
+        try {
+<span class="fc" id="L47">        	this.mainFile = new File(mainFilePath);</span>
+<span class="fc" id="L48">        	this.mainFile.createNewFile();</span>
+<span class="fc" id="L49">        	this.bw = new BufferedWriter(new FileWriter(this.mainFile));</span>
+<span class="nc" id="L50">		} catch (IOException e) {</span>
+<span class="nc" id="L51">			e.printStackTrace();</span>
+<span class="fc" id="L52">		}</span>
+<span class="fc" id="L53">        escribirCabecera(datos.getProcesos());</span>
+<span class="fc" id="L54">        escribirConstantes(datos.getTransiciones().size(), configFilePath);</span>
+<span class="fc" id="L55">        escribirMetodoMain();</span>
+<span class="fc" id="L56">        escribirConstructor(datos.getProcesos());</span>
+        try {
+			//Se cierra la clase.
+<span class="fc" id="L59">        	this.bw.write(&quot;}\n&quot;);</span>
+<span class="fc" id="L60">		    this.bw.close();</span>
+<span class="nc" id="L61">		} catch (java.io.IOException e) {</span>
+<span class="nc" id="L62">			e.printStackTrace();</span>
+<span class="fc" id="L63">		}</span>
+<span class="fc" id="L64">	}</span>
+	/**
+	 * Método que escribe la cabecera del archivo fuente Main del proyecto.
+	 * Incluyendo la declaración del package, clases importadas e interfaz de
+	 * clase.
+	 * @param procesos ArrayList con la lista completa de procesos definidos
+	 * de la red.
+	 */
+	private void escribirCabecera(final ArrayList&lt;Proceso&gt; procesos) {
+		try {
+			//Se escribe el nombre package de la clase
+<span class="fc" id="L75">			this.bw.write(&quot;package main;&quot;);</span>
+<span class="fc" id="L76">			this.bw.newLine();</span>
+			//Se importa el procesador que ejecuta la red.
+<span class="fc" id="L78">			this.bw.write(&quot;import procesador.ProcesadorPetri;&quot;);</span>
+<span class="fc" id="L79">			this.bw.newLine();</span>
+<span class="fc" id="L80">			this.bw.write(&quot;import procesadorPNVirtual.ProcesadorPetriVirtual;&quot;);</span>
+<span class="fc" id="L81">			this.bw.newLine();</span>
+<span class="fc" id="L82">			final Iterator&lt;Proceso&gt; itp = procesos.iterator();</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">			while (itp.hasNext()) {</span>
+<span class="fc" id="L84">				final String idProceso = itp.next().getId();</span>
+<span class="fc" id="L85">				this.bw.write(&quot;import procesos.&quot; + idProceso + &quot;;&quot;);</span>
+<span class="fc" id="L86">				this.bw.newLine();</span>
+<span class="fc" id="L87">			}</span>
+			//Se escribe la definicion de clase
+<span class="fc" id="L89">			this.bw.write(&quot;\npublic class Main {&quot;);</span>
+<span class="fc" id="L90">			this.bw.newLine();</span>
+<span class="nc" id="L91">		} catch (IOException e) {</span>
+<span class="nc" id="L92">			e.printStackTrace();</span>
+<span class="fc" id="L93">		}</span>
+<span class="fc" id="L94">	}</span>
+	/**
+	 * Se encarga de escribir las contantes en el archivo main generado.
+	 * @param cantidadTransiciones cantidad de transiciones del sistema
+	 * @param configPath path 
+	 */
+	private void escribirConstantes(
+		final int cantidadTransiciones, final String configPath) {
+		try {
+<span class="fc" id="L103">			final String arrayConfigPath[] = configPath.split(&quot;\\\\&quot;);</span>
+<span class="fc" id="L104">			String nuevoPath = new String(&quot;&quot;);</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">			for (int i = 0; i &lt; arrayConfigPath.length; i = i + 1) {</span>
+<span class="fc" id="L106">				nuevoPath = nuevoPath + arrayConfigPath[i];</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">				if (i &lt; (arrayConfigPath.length - 1)) {</span>
+<span class="fc" id="L108">					nuevoPath = nuevoPath + &quot;\\\\&quot;;</span>
+				}
+			}
+			//Se escribe el path del archivo de configuracion y la 
+			//constante con cantidad de transiciones.
+<span class="fc" id="L113">			this.bw.write(&quot;\n\tprivate static final int CANTIDADTRANSICIONES = &quot; +</span>
+				cantidadTransiciones + &quot;;&quot;);
+<span class="fc" id="L115">			this.bw.newLine();</span>
+<span class="fc" id="L116">			this.bw.write(&quot;\tprivate static final String CONFIGFILE = \&quot; &quot; +</span>
+					nuevoPath +
+					&quot;\&quot;;&quot;);
+<span class="fc" id="L119">			this.bw.newLine();</span>
+<span class="nc" id="L120">		} catch (Exception e) {</span>
+<span class="nc" id="L121">			e.printStackTrace();</span>
+<span class="fc" id="L122">		}</span>
+<span class="fc" id="L123">	}</span>
+	/*
+	 * Escribe el metodo main en el archivo &quot;main&quot; del código generado.
+	 */
+	private void escribirMetodoMain() {
+		try {
+<span class="fc" id="L129">			this.bw.write(&quot;\tpublic static void main(String[] args) {\n&quot; +</span>
+					&quot;\t\t\tjavax.swing.SwingUtilities.invokeLater(new Runnable(){\n&quot; +
+					&quot;\t\t\t\tpublic void run(){\n&quot; +
+					&quot;\t\t\t\t\tMain m = new Main();\n&quot; +
+            		&quot;\t\t\t\t}\n\t\t});\n\t}\n&quot;);
+<span class="fc" id="L134">			this.bw.newLine();</span>
+<span class="nc" id="L135">		} catch (IOException e) {</span>
+<span class="nc" id="L136">			e.printStackTrace();</span>
+<span class="fc" id="L137">		}</span>
+<span class="fc" id="L138">	}</span>
+	/**
+	 * Escribe el contructor en el archivo &quot;main&quot; del código generado.
+	 * @param procesos procesos que estan definidos
+	 */
+	private void escribirConstructor(final ArrayList&lt;Proceso&gt; procesos) {
+		try {
+<span class="fc" id="L145">			this.bw.write(&quot;\tpublic Main() {\n&quot; +</span>
+				&quot;\t\t//En primer lugar se levanta el procesador.\n&quot; +
+				&quot;\t\tProcesadorPetri procesador =&quot; +
+				&quot;new ProcesadorPetriVirtual&quot; +
+				&quot;(CONFIGFILE, CANTIDADTRANSICIONES);\n&quot; +
+				&quot;\t\t//Luego se levantan los procesos.\n&quot;);
+<span class="fc" id="L151">			final Iterator&lt;Proceso&gt; it = procesos.iterator();</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">			while (it.hasNext()) {</span>
+<span class="fc" id="L153">				final Proceso proceso = it.next();</span>
+<span class="fc" id="L154">				final String idProceso = proceso.getId();</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">				if (proceso.isRunnable()) {</span>
+<span class="fc" id="L156">					this.bw.write(&quot;\t\tnew Thread(new &quot; + idProceso +</span>
+						&quot;(procesador)).start();&quot;);
+<span class="fc" id="L158">					this.bw.newLine();</span>
+				} else {
+<span class="fc" id="L160">					this.bw.write(&quot;\t\t&quot; + idProceso + &quot; &quot; +</span>
+							idProceso.toLowerCase() + &quot;= new &quot; +
+							idProceso + &quot;(procesador);&quot;);
+<span class="fc" id="L163">					this.bw.newLine();</span>
+				}
+<span class="fc" id="L165">			}</span>
+<span class="fc" id="L166">			this.bw.write(&quot;\t}&quot;);</span>
+<span class="fc" id="L167">			this.bw.newLine();</span>
+<span class="nc" id="L168">		} catch (IOException e) {</span>
+<span class="nc" id="L169">			e.printStackTrace();</span>
+<span class="fc" id="L170">		}</span>
+<span class="fc" id="L171">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

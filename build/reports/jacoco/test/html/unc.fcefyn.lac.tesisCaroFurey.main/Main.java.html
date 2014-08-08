@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.main</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.main;
+
+import java.awt.EventQueue;
+import unc.fcefyn.lac.tesisCaroFurey.generacionCodigo.GenerarCodigoJava;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.Tina;
+import unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipal;
+
+/**
+ * Clase principal del proyecto, inicializa todas las instancias de una clase.
+ * @author Caro, Maria Florencia &amp; Furey, Ignacio
+ */
+public final class Main {
+	
+	/**
+	 * Class constructor. Inicializa las instancias de las variables globales
+	 * de clase.
+	 */
+<span class="nc" id="L18">	private Main() {</span>
+		//Crea una nueva instancia de VentanaPrincipal,
+		//pasa como parametro las instancias de los objetos
+<span class="nc" id="L21">		new VentanaPrincipal(new Tina(), new GenerarCodigoJava());</span>
+<span class="nc" id="L22">	}</span>
+	
+	/**
+	 * Metodo inicializador.
+	 * @param args Argumentos de inicio
+	 */
+	public static void main(final String[] args) {
+<span class="nc" id="L29">		EventQueue.invokeLater(new Runnable() {</span>
+			@SuppressWarnings(&quot;unused&quot;)
+			public void run() {
+				try {
+					//Crea una instancia de Main
+<span class="nc" id="L34">					final Main program = new Main();</span>
+<span class="nc" id="L35">				} catch (Exception e) {</span>
+<span class="nc" id="L36">					e.printStackTrace();</span>
+<span class="nc" id="L37">				}</span>
+<span class="nc" id="L38">			}</span>
+		});
+<span class="nc" id="L40">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

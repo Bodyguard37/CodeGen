@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefinicionProcesos.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.interfazGrafica</a> &gt; <span class="el_source">DefinicionProcesos.java</span></div><h1>DefinicionProcesos.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.interfazGrafica;
+
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.AbstractHerramientaPN;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.Proceso;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.TransicionProceso;
+
+/**
+ * Ventana usada para definir las trancisiones de los procesos.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+public class DefinicionProcesos {
+	/**
+	 * JFrame de la ventana.
+	 */
+	protected JFrame frmDefinicionProcesos;
+	/**
+	 * JPanel para contener las transiciones.
+	 */
+	protected JPanel panelTransiciones;
+	/**
+	 * ArrayList con una instancia de ValoresTransiciones por cada transicion
+	 * de la red.
+	 */
+	protected ArrayList&lt;ValoresTransicion&gt; valoresTransiciones;
+	/**
+	 * JTextField usado para capturar el numbre del nuevo hilo cuando se agrega
+	 * un hilo nuevo, o el nombre del hilo a remover cuando se elimina un hilo.
+	 */
+	protected JTextField nombreNuevoHilo;
+	/**
+	 * Combo box de hilos.
+	 */
+	protected JComboBox&lt;String&gt; hilosComboBox;
+	/**
+	 * Herramienta red de petri con los datos.
+	 */
+	protected AbstractHerramientaPN hpn;
+	/**
+	 * Contiene si un hilo es runnable o no segun su id.
+	 */
+	protected HashMap&lt;String, Boolean&gt; definicionHilos;
+	/**
+	 * indica si un hilo es runnable o no.
+	 */
+	protected JCheckBox chckbxRunnable;
+	/**
+	 * Create the application.
+	 * @param datos la instancia de HerramientaPN que contiene los datos de la 
+	 * red.
+	 */
+<span class="fc" id="L74">	public DefinicionProcesos(final AbstractHerramientaPN datos) {</span>
+<span class="fc" id="L75">		this.hpn = datos;</span>
+<span class="fc" id="L76">		initialize(datos.getProcesos(), datos.getTransiciones());</span>
+<span class="fc" id="L77">		this.frmDefinicionProcesos.setVisible(true);</span>
+<span class="fc" id="L78">	}</span>
+	/**
+	 * Initialize the contents of the frame.
+	 * @param transiciones transiciones de la red.
+	 * @param procesos procesosya definidos.
+	 */
+	private void initialize(final ArrayList&lt;Proceso&gt; procesos,
+			final HashMap&lt;String, Integer&gt; transiciones) {
+		//inicializo variables.
+<span class="fc" id="L87">		this.definicionHilos = new HashMap&lt;String, Boolean&gt;();</span>
+<span class="fc" id="L88">		this.valoresTransiciones = new ArrayList&lt;ValoresTransicion&gt;();</span>
+<span class="fc" id="L89">		this.frmDefinicionProcesos = new JFrame();</span>
+<span class="fc" id="L90">		this.frmDefinicionProcesos.setTitle(&quot;Definicion Procesos&quot;);</span>
+<span class="fc" id="L91">		this.frmDefinicionProcesos.setBounds(100, 100, 733, 460);</span>
+<span class="fc" id="L92">		this.frmDefinicionProcesos.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);</span>
+
+<span class="fc" id="L94">		final JScrollPane scrollPaneTransiciones = new JScrollPane();</span>
+
+<span class="fc" id="L96">		final JPanel panelButtons = new JPanel();</span>
+
+<span class="fc" id="L98">		this.hilosComboBox = new JComboBox&lt;String&gt;();</span>
+<span class="fc" id="L99">		this.hilosComboBox.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent arg0) {
+<span class="fc" id="L101">				setIdHiloActual();</span>
+<span class="fc" id="L102">			}</span>
+		});
+
+<span class="fc" id="L105">		this.chckbxRunnable = new JCheckBox(&quot;Runnable&quot;);</span>
+<span class="fc" id="L106">		this.chckbxRunnable.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L108">				definicionHilos.put((String) hilosComboBox.getSelectedItem(),</span>
+						Boolean.valueOf(chckbxRunnable.isSelected()));
+<span class="nc" id="L110">			}</span>
+		});
+<span class="fc" id="L112">		final GroupLayout groupLayout = new GroupLayout(</span>
+				this.frmDefinicionProcesos.getContentPane());
+<span class="fc" id="L114">		groupLayout.setHorizontalGroup(</span>
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(panelButtons,
+								GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(
+									Alignment.LEADING)
+								.addComponent(this.hilosComboBox,
+										GroupLayout.PREFERRED_SIZE, 128,
+										GroupLayout.PREFERRED_SIZE)
+								.addComponent(this.chckbxRunnable))
+							.addGap(5)
+							.addComponent(scrollPaneTransiciones,
+									GroupLayout.DEFAULT_SIZE, 564,
+									Short.MAX_VALUE)))
+					.addContainerGap())
+		);
+<span class="fc" id="L134">		groupLayout.setVerticalGroup(</span>
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPaneTransiciones,
+								GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(this.hilosComboBox,
+									GroupLayout.PREFERRED_SIZE, 28,
+									GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(this.chckbxRunnable)))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelButtons, GroupLayout.PREFERRED_SIZE, 33,
+							GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
+<span class="fc" id="L152">		panelButtons.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));</span>
+
+<span class="fc" id="L154">		final ActionListener crearHiloActionlistener = new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L156">				crearHilo(nombreNuevoHilo.getText(), Boolean.FALSE);</span>
+<span class="nc" id="L157">				nombreNuevoHilo.setText(&quot;&quot;);</span>
+<span class="nc" id="L158">			}</span>
+		};
+<span class="fc" id="L160">		final JButton btnCrearHilo = new JButton(&quot;Crear Proceso&quot;);</span>
+<span class="fc" id="L161">		btnCrearHilo.addActionListener(crearHiloActionlistener);</span>
+
+<span class="fc" id="L163">		this.nombreNuevoHilo = new JTextField();</span>
+<span class="fc" id="L164">		this.nombreNuevoHilo.addActionListener(crearHiloActionlistener);</span>
+<span class="fc" id="L165">		panelButtons.add(this.nombreNuevoHilo);</span>
+<span class="fc" id="L166">		this.nombreNuevoHilo.setColumns(20);</span>
+<span class="fc" id="L167">		panelButtons.add(btnCrearHilo);</span>
+
+<span class="fc" id="L169">		final JButton btnEliminarHilo = new JButton(&quot;Eliminar Proceso&quot;);</span>
+<span class="fc" id="L170">		btnEliminarHilo.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent arg0) {
+<span class="nc" id="L172">				removerHilo((String) hilosComboBox.getSelectedItem());</span>
+<span class="nc" id="L173">			}</span>
+		});
+<span class="fc" id="L175">		panelButtons.add(btnEliminarHilo);</span>
+
+<span class="fc" id="L177">		final JButton btnAceptar = new JButton(&quot;Aceptar&quot;);</span>
+<span class="fc" id="L178">		btnAceptar.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L180">				generarArchivoHilos();</span>
+<span class="nc" id="L181">				frmDefinicionProcesos.setVisible(false);</span>
+<span class="nc" id="L182">			}</span>
+		});
+<span class="fc" id="L184">		panelButtons.add(btnAceptar);</span>
+<span class="fc" id="L185">		final JButton btnCancelar = new JButton(&quot;Cancelar&quot;);</span>
+<span class="fc" id="L186">		btnCancelar.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent arg0) {
+<span class="nc" id="L188">				frmDefinicionProcesos.setVisible(false);</span>
+<span class="nc" id="L189">			}</span>
+		});
+<span class="fc" id="L191">		panelButtons.add(btnCancelar);</span>
+
+<span class="fc" id="L193">		final Iterator&lt;Proceso&gt; procIt = procesos.iterator();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		while (procIt.hasNext()) {</span>
+<span class="fc" id="L195">			final Proceso proc = procIt.next();</span>
+<span class="fc" id="L196">			crearHilo(proc.getId(), proc.isRunnable());</span>
+<span class="fc" id="L197">		}</span>
+
+<span class="fc" id="L199">		this.panelTransiciones = new JPanel();</span>
+<span class="fc" id="L200">		scrollPaneTransiciones.setViewportView(this.panelTransiciones);</span>
+<span class="fc" id="L201">		final GridBagLayout gblPanelTransiciones = new GridBagLayout();</span>
+<span class="fc" id="L202">		gblPanelTransiciones.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};</span>
+<span class="fc" id="L203">		gblPanelTransiciones.rowHeights = new int[]{0, 0, 0, 0};</span>
+<span class="fc" id="L204">		gblPanelTransiciones.columnWeights = new double[]</span>
+		{1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
+<span class="fc" id="L206">		gblPanelTransiciones.rowWeights = new double[]</span>
+		{0.0, 0.0, 1.0, Double.MIN_VALUE};
+<span class="fc" id="L208">		this.panelTransiciones.setLayout(gblPanelTransiciones);</span>
+
+<span class="fc" id="L210">		final JLabel labelIdTransicion = new JLabel(&quot;IdTrancision&quot;);</span>
+<span class="fc" id="L211">		final GridBagConstraints gbcLabelIdTransicion = new GridBagConstraints();</span>
+<span class="fc" id="L212">		gbcLabelIdTransicion.insets = new Insets(0, 0, 5, 5);</span>
+<span class="fc" id="L213">		gbcLabelIdTransicion.gridx = 0;</span>
+<span class="fc" id="L214">		gbcLabelIdTransicion.gridy = 0;</span>
+<span class="fc" id="L215">		this.panelTransiciones.add(labelIdTransicion, gbcLabelIdTransicion);</span>
+
+<span class="fc" id="L217">		final JLabel labelDisparo = new JLabel(&quot;DISPARO&quot;);</span>
+<span class="fc" id="L218">		final GridBagConstraints gbcLabelDisparo = new GridBagConstraints();</span>
+<span class="fc" id="L219">		gbcLabelDisparo.insets = new Insets(0, 0, 5, 5);</span>
+<span class="fc" id="L220">		gbcLabelDisparo.gridx = 1;</span>
+<span class="fc" id="L221">		gbcLabelDisparo.gridy = 0;</span>
+<span class="fc" id="L222">		this.panelTransiciones.add(labelDisparo, gbcLabelDisparo);</span>
+
+<span class="fc" id="L224">		final JLabel labelSecuenciaDisparo = new JLabel(&quot;# Secuencia&quot;);</span>
+<span class="fc" id="L225">		final GridBagConstraints gbcLabelSecuenciaDisparo =</span>
+				new GridBagConstraints();
+<span class="fc" id="L227">		gbcLabelSecuenciaDisparo.insets = new Insets(0, 0, 5, 5);</span>
+<span class="fc" id="L228">		gbcLabelSecuenciaDisparo.gridx = 2;</span>
+<span class="fc" id="L229">		gbcLabelSecuenciaDisparo.gridy = 0;</span>
+<span class="fc" id="L230">		this.panelTransiciones.add(labelSecuenciaDisparo, gbcLabelSecuenciaDisparo);</span>
+
+<span class="fc" id="L232">		final JLabel labelMetodoDisparo = new JLabel(&quot;Metodo()&quot;);</span>
+<span class="fc" id="L233">		final GridBagConstraints gbcLabelMetodoDisparo =</span>
+				new GridBagConstraints();
+<span class="fc" id="L235">		gbcLabelMetodoDisparo.insets = new Insets(0, 0, 5, 5);</span>
+<span class="fc" id="L236">		gbcLabelMetodoDisparo.gridx = 3;</span>
+<span class="fc" id="L237">		gbcLabelMetodoDisparo.gridy = 0;</span>
+<span class="fc" id="L238">		this.panelTransiciones.add(labelMetodoDisparo, gbcLabelMetodoDisparo);</span>
+
+<span class="fc" id="L240">		final JLabel labelInforme = new JLabel(&quot;INFORME&quot;);</span>
+<span class="fc" id="L241">		final GridBagConstraints gbcLabelInforme = new GridBagConstraints();</span>
+<span class="fc" id="L242">		gbcLabelInforme.insets = new Insets(0, 0, 5, 5);</span>
+<span class="fc" id="L243">		gbcLabelInforme.gridx = 4;</span>
+<span class="fc" id="L244">		gbcLabelInforme.gridy = 0;</span>
+<span class="fc" id="L245">		this.panelTransiciones.add(labelInforme, gbcLabelInforme);</span>
+
+<span class="fc" id="L247">		final JLabel labelSecuenciaInforme = new JLabel(&quot;# Secuencia&quot;);</span>
+<span class="fc" id="L248">		final GridBagConstraints gbcLabelSecuenciaInforme =</span>
+				new GridBagConstraints();
+<span class="fc" id="L250">		gbcLabelSecuenciaInforme.insets = new Insets(0, 0, 5, 5);</span>
+<span class="fc" id="L251">		gbcLabelSecuenciaInforme.gridx = 5;</span>
+<span class="fc" id="L252">		gbcLabelSecuenciaInforme.gridy = 0;</span>
+<span class="fc" id="L253">		this.panelTransiciones.add(labelSecuenciaInforme, gbcLabelSecuenciaInforme);</span>
+
+<span class="fc" id="L255">		final JLabel labelMetodoInforme = new JLabel(&quot;Metodo()&quot;);</span>
+<span class="fc" id="L256">		final GridBagConstraints gbcLabelMetodoInforme = new GridBagConstraints();</span>
+<span class="fc" id="L257">		gbcLabelMetodoInforme.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L258">		gbcLabelMetodoInforme.gridx = 6;</span>
+<span class="fc" id="L259">		gbcLabelMetodoInforme.gridy = 0;</span>
+<span class="fc" id="L260">		this.panelTransiciones.add(labelMetodoInforme, gbcLabelMetodoInforme);</span>
+
+<span class="fc" id="L262">		final Iterator&lt;String&gt; transIt = transiciones.keySet().iterator();</span>
+<span class="fc" id="L263">		int contadorTransiciones = 1;</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">		while (transIt.hasNext()) {</span>
+<span class="fc" id="L265">			this.valoresTransiciones.add(new ValoresTransicion(</span>
+					contadorTransiciones, this.panelTransiciones,
+					transiciones.size(),
+					transIt.next()));
+<span class="fc" id="L269">			contadorTransiciones = contadorTransiciones + 1;</span>
+		}
+<span class="fc" id="L271">		this.restaurarValoresTransiciones(procesos);</span>
+<span class="fc" id="L272">		this.setIdHiloActual();</span>
+<span class="fc" id="L273">		this.frmDefinicionProcesos.getContentPane().setLayout(groupLayout);</span>
+<span class="fc" id="L274">	}</span>
+	/**
+	 * Establece un cambio de hilo para todas las instancias de
+	 * ValoresTransicion dentro del ArrayList valoresTransiciones.
+	 */
+	protected void setIdHiloActual() {
+<span class="fc" id="L280">		this.chckbxRunnable.setEnabled(true);</span>
+<span class="fc" id="L281">		final String idHiloNuevo = (String) this.hilosComboBox.getSelectedItem();</span>
+<span class="fc" id="L282">		final Iterator&lt;ValoresTransicion&gt; it2 = this.valoresTransiciones.iterator();</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">		while (it2.hasNext()) {</span>
+<span class="fc" id="L284">			it2.next().setIdHiloActual(idHiloNuevo);</span>
+		}
+		try {
+<span class="fc" id="L287">			this.chckbxRunnable.setSelected(</span>
+					this.definicionHilos.get(idHiloNuevo).booleanValue());
+<span class="nc" id="L289">		} catch (NullPointerException npe) {</span>
+<span class="nc" id="L290">			this.chckbxRunnable.setSelected(false);</span>
+<span class="nc" id="L291">			this.chckbxRunnable.setEnabled(false);</span>
+<span class="fc" id="L292">		}</span>
+<span class="fc" id="L293">	}</span>
+
+	/**
+	 * Agrega un nuevo hilo. Controla que no se repitan los id de hilo antes
+	 * de agregar.
+	 * @param idNuevoHilo id del hilo a agregar.
+	 * @param runnable indica si el hilo nuevo es runnable.
+	 */
+	protected void crearHilo(final String idNuevoHilo, final boolean runnable) {
+		//controlo que no exista un hilo con ese id, y que el id nuevo no este
+		//vacio.
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">		if (idNuevoHilo.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L305">			JOptionPane.showMessageDialog(null, &quot;Id de hilo vacio, &quot; +</span>
+					&quot;debe colocar un id para el hilo nuevo&quot;,
+					&quot;ERROR&quot;, JOptionPane.ERROR_MESSAGE);
+		} else {
+<span class="pc bpc" id="L309" title="1 of 2 branches missed.">			if (idHiloExistente(idNuevoHilo)) {</span>
+<span class="nc" id="L310">				JOptionPane.showMessageDialog(null, &quot;Ya existe un hilo con &quot; +</span>
+						&quot;ese id, el id de hilo debe ser único&quot;,
+						&quot;ERROR&quot;, JOptionPane.ERROR_MESSAGE);
+			} else {
+<span class="fc" id="L314">				this.definicionHilos.put(idNuevoHilo, runnable);</span>
+<span class="fc" id="L315">				this.hilosComboBox.addItem(idNuevoHilo);</span>
+			}
+		}
+<span class="fc" id="L318">	}</span>
+
+	/**
+	 * Remueve el hilo cuyo id sea igual a idHilo si es que existe en la lista
+	 * de hilos.
+	 * @param idHilo
+	 */
+	protected void removerHilo(final String idHilo) {
+<span class="fc" id="L326">		this.hilosComboBox.removeItem(idHilo);</span>
+<span class="fc" id="L327">		this.definicionHilos.remove(idHilo);</span>
+<span class="fc" id="L328">		final Iterator&lt;ValoresTransicion&gt; it =</span>
+				this.valoresTransiciones.iterator();
+<span class="fc bfc" id="L330" title="All 2 branches covered.">		while (it.hasNext()) {</span>
+<span class="fc" id="L331">			it.next().removerHilo(idHilo);</span>
+		}
+<span class="fc" id="L333">	}</span>
+	/**
+	 * Controla si ya existe en seleccionHilos un hilo con id igual a idHilo.
+	 * @param idHilo id de hilo a controlar.
+	 * @return la posicion en seleccionHilos del hilo con id igual a idHilo o
+	 * -1 si no existe un hilo con ese id.
+	 */
+	protected boolean idHiloExistente(final String idHilo) {
+<span class="fc bfc" id="L341" title="All 2 branches covered.">		for (int i = 0; i &lt; this.hilosComboBox.getItemCount(); i = i + 1) {</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">			if (this.hilosComboBox.getItemAt(i).equals(idHilo)) {</span>
+<span class="fc" id="L343">				return true;</span>
+			}
+		}
+<span class="fc" id="L346">		return false;</span>
+	}
+	/**
+	 * Recopila la informacion definida en la ventana y llama al metodo para
+	 * guardarla en el archivo xml.
+	 */
+	protected void generarArchivoHilos() {
+<span class="fc" id="L353">		final ArrayList&lt;Proceso&gt; procesosDefinidos = new ArrayList&lt;Proceso&gt;();</span>
+		//Recorro todos los hilos
+<span class="fc bfc" id="L355" title="All 2 branches covered.">		for (int i = 0; i &lt; this.hilosComboBox.getItemCount(); i = i + 1) {</span>
+			//Creo un hilo
+<span class="fc" id="L357">			final String hilo = this.hilosComboBox.getItemAt(i);</span>
+<span class="fc" id="L358">			final Proceso proceso = new Proceso(hilo,</span>
+					this.definicionHilos.get(hilo).booleanValue());
+<span class="fc" id="L360">			final Iterator&lt;ValoresTransicion&gt; trIt =</span>
+					this.valoresTransiciones.iterator();
+<span class="fc bfc" id="L362" title="All 2 branches covered.">			while (trIt.hasNext()) {</span>
+<span class="fc" id="L363">				proceso.addTransicion(trIt.next().generarTransicionHilo(hilo));</span>
+			}
+<span class="fc" id="L365">			procesosDefinidos.add(proceso);</span>
+		}
+<span class="fc" id="L367">		this.hpn.reemplazarArchivoXML(procesosDefinidos);</span>
+<span class="fc" id="L368">	}</span>
+	/**
+	 * Establece valores de los procesos ya definidos.
+	 * @param procesos procesos
+	 */
+	protected void restaurarValoresTransiciones(
+			final ArrayList&lt;Proceso&gt; procesos) {
+		//Iterator para cada uno de los procesos.
+<span class="fc" id="L376">		final Iterator&lt;Proceso&gt; procIt = procesos.iterator();</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">		while (procIt.hasNext()) {</span>
+<span class="fc" id="L378">			final Proceso actual = procIt.next();</span>
+			//Iterator para cada una de las TransicionProceso.
+<span class="fc" id="L380">			final Iterator&lt;TransicionProceso&gt; transicionesProcActual =</span>
+					actual.getTransiciones().iterator();
+<span class="fc bfc" id="L382" title="All 2 branches covered.">			while (transicionesProcActual.hasNext()) {</span>
+<span class="fc" id="L383">				final TransicionProceso trActual =</span>
+						transicionesProcActual.next();
+				//Iterator para cada una de los valoresTransicion.
+<span class="fc" id="L386">				final Iterator&lt;ValoresTransicion&gt; transicionesGraficas =</span>
+						this.valoresTransiciones.iterator();
+<span class="fc bfc" id="L388" title="All 2 branches covered.">				while (transicionesGraficas.hasNext()) {</span>
+<span class="fc" id="L389">					final ValoresTransicion trGraf =</span>
+							transicionesGraficas.next();
+<span class="fc bfc" id="L391" title="All 2 branches covered.">					if (trActual.getIdTransicion().</span>
+							equals(trGraf.getIdTransicion())) {
+						//Define los valores para el disparo e informe
+						//de la transicion.
+<span class="fc bfc" id="L395" title="All 2 branches covered.">						if (trActual.getDisparo()) {</span>
+<span class="fc" id="L396">							trGraf.setDisparo(trActual.getDisparo());</span>
+<span class="fc" id="L397">							trGraf.setMetodoDisparo(</span>
+									trActual.getMetodoDisparo());
+<span class="fc" id="L399">							trGraf.setOrdenDisparo(trActual.getOrdenDisparo());</span>
+<span class="fc" id="L400">							trGraf.setIdHiloDisparo(actual.getId());</span>
+						}
+<span class="fc bfc" id="L402" title="All 2 branches covered.">						if (trActual.getInforme()) {</span>
+<span class="fc" id="L403">							trGraf.setInforme(trActual.getInforme());</span>
+<span class="fc" id="L404">							trGraf.setMetodoInforme(</span>
+									trActual.getMetodoInforme());
+<span class="fc" id="L406">							trGraf.setOrdenInforme(trActual.getOrdenInforme());</span>
+<span class="fc" id="L407">							trGraf.setIdHiloInforme(actual.getId());</span>
+						}
+					}
+<span class="fc" id="L410">				}</span>
+<span class="fc" id="L411">			}</span>
+<span class="fc" id="L412">		}</span>
+<span class="fc" id="L413">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

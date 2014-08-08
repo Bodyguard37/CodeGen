@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ManejadorEtiquetas.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorEtiquetas</a> &gt; <span class="el_source">ManejadorEtiquetas.java</span></div><h1>ManejadorEtiquetas.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorEtiquetas;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+/**
+ * Clase encargada de leer las etiquetas de transición desde el archivo de descripción
+ * de la red de Petri y por cada una de ellas genera una instancia de la clase guardando
+ * la información de las etiquetas en una lista.
+ * @author Caro, Maria Florencia &amp; Furey, Ignacio
+ */
+public class ManejadorEtiquetas {
+
+	/**
+	 * Lista de etiquetas.
+	 */
+	private ArrayList&lt;Etiqueta&gt; etiquetas;
+
+	/**
+	 * Constructor.
+	 * @param pathARedPetri path al archivo PNML a analizar.
+	 */
+<span class="fc" id="L37">	public ManejadorEtiquetas(final String pathARedPetri) {</span>
+<span class="fc" id="L38">		this.etiquetas = new ArrayList&lt;Etiqueta&gt;();</span>
+<span class="fc" id="L39">		this.leerEtiquetasDesdePNML(pathARedPetri);</span>
+<span class="fc" id="L40">	}</span>
+
+	/**
+	 * Getter.
+	 * @return Array list de etiquetas.
+	 */
+	public ArrayList&lt;Etiqueta&gt; getEtiquetas() {
+<span class="fc" id="L47">		return this.etiquetas;</span>
+	}
+
+	/**
+	 * Lee los valores desde el PNML y completa el atributo Etiquetas con
+	 * objetos de tipo Etiqueta.
+	 * @param pathARedPetri Path al archivo PNML de la red a analizar.
+	 */
+	private void leerEtiquetasDesdePNML(final String pathARedPetri) {
+<span class="fc" id="L56">  		final File xmlFile = new File(pathARedPetri);</span>
+<span class="fc" id="L57">		final DocumentBuilderFactory dbFactory =</span>
+			DocumentBuilderFactory.newInstance();
+<span class="fc" id="L59">		DocumentBuilder dBuilder = null;</span>
+		try {
+<span class="fc" id="L61">			dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="nc" id="L62">		} catch (ParserConfigurationException e1) {</span>
+<span class="nc" id="L63">			e1.printStackTrace();</span>
+<span class="fc" id="L64">		}</span>
+<span class="fc" id="L65">		Document doc = null;</span>
+		try {
+<span class="fc" id="L67">			doc = dBuilder.parse(xmlFile);</span>
+<span class="nc" id="L68">		} catch (SAXException | IOException e) {</span>
+<span class="nc" id="L69">			e.printStackTrace();</span>
+<span class="fc" id="L70">		}</span>
+<span class="fc" id="L71">		doc.getDocumentElement().normalize();</span>
+		//Nodo &quot;transition&quot;
+<span class="fc" id="L73">		final NodeList listaTransiciones =</span>
+			doc.getElementsByTagName(&quot;transition&quot;);
+<span class="fc" id="L75">		Etiqueta etiqueta = null;</span>
+<span class="fc" id="L76">		String idTransicion = &quot;&quot;;</span>
+<span class="fc" id="L77">		String etiquetaAParsear = &quot;&quot;;</span>
+<span class="fc" id="L78">		String primerValor = &quot;&quot;;</span>
+<span class="fc" id="L79">		String segundoValor = &quot;&quot;;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		for (int temp = 0; temp &lt; listaTransiciones.getLength(); temp = temp + 1) {</span>
+<span class="fc" id="L81">			final Node transition = listaTransiciones.item(temp);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">			if (transition.getNodeType() == Node.ELEMENT_NODE) {</span>
+<span class="fc" id="L83">				final Element transicion = (Element) transition;</span>
+<span class="fc" id="L84">				idTransicion = transicion.getAttribute(&quot;id&quot;);</span>
+<span class="fc" id="L85">				final NodeList texto = transicion.getElementsByTagName(&quot;text&quot;);</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">				if (texto.item(0) != null) {</span>
+					String[] aux;
+<span class="fc" id="L88">					final String delimiter = &quot;,&quot;;</span>
+<span class="fc" id="L89">					etiquetaAParsear = texto.item(0).getTextContent();</span>
+<span class="fc" id="L90">					aux = etiquetaAParsear.split(delimiter);</span>
+<span class="fc" id="L91">					primerValor = aux[0].replace(&quot;&lt;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L92">					primerValor = primerValor.replace(&quot; &quot;, &quot;&quot;);</span>
+<span class="fc" id="L93">					segundoValor = aux[1].replace(&quot;&gt;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L94">					segundoValor = segundoValor.replace(&quot; &quot;, &quot;&quot;);</span>
+<span class="fc" id="L95">				} else {</span>
+<span class="nc" id="L96">					primerValor = &quot;A&quot;;</span>
+<span class="nc" id="L97">					segundoValor = &quot;N&quot;;</span>
+				}
+<span class="fc" id="L99">				etiqueta = new Etiqueta(idTransicion, primerValor,</span>
+						segundoValor);
+<span class="fc" id="L101">				this.etiquetas.add(etiqueta);</span>
+			}
+		}
+<span class="fc" id="L104">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

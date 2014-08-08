@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Proceso.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos</a> &gt; <span class="el_source">Proceso.java</span></div><h1>Proceso.java</h1><pre class="source lang-java linenums">
+package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos;
+
+import java.util.ArrayList;
+
+
+/**
+ * Clase que representa un proceso, resume toda la información de un proceso.
+ *@author María Florencia Caro &amp; Ignacio Furey 
+ */
+public class Proceso {
+	/**
+	 * id de Proceso.
+	 */
+	private String id;
+	/**
+	 * Transiciones del proceso.
+	 */
+	private ArrayList&lt;TransicionProceso&gt; transiciones;
+	/**
+	 * Variable booleana. Si es true es un hilo de ejecución del sistema definido
+	 * por el usuario.
+	 */
+	private boolean runnable;
+	/**
+	 * Define si un proceso es runnable o no.
+	 * @return true si el proceso es runnable, false en caso contrario.
+	 */
+	public boolean isRunnable() {
+<span class="fc" id="L30">		return this.runnable;</span>
+	}
+	/**
+	 * Setter.
+	 * @param runnableNuevo the runnable to set
+	 */
+	public void setRunnable(final boolean runnableNuevo) {
+<span class="nc" id="L37">		this.runnable = runnableNuevo;</span>
+<span class="nc" id="L38">	}</span>
+	/**
+	 * Constructor.
+	 * @param idNuevo id del proceso.
+	 * @param runnableNuevo informacion de runnable.
+	 */
+<span class="fc" id="L44">	public Proceso(final String idNuevo, final boolean runnableNuevo) {</span>
+<span class="fc" id="L45">		this.id = idNuevo;</span>
+<span class="fc" id="L46">		this.runnable = runnableNuevo;</span>
+<span class="fc" id="L47">		this.transiciones = new ArrayList&lt;TransicionProceso&gt;();</span>
+<span class="fc" id="L48">	}</span>
+	/**
+	 * Setter.
+	 * @return the id
+	 */
+	public String getId() {
+<span class="fc" id="L54">		return this.id;</span>
+	}
+	/**
+	 * Getter.
+	 * @return the transicionesDisparo
+	 */
+	public ArrayList&lt;TransicionProceso&gt; getTransiciones() {
+<span class="fc" id="L61">		return this.transiciones;</span>
+	}
+	/**
+	 * Agrega una transición si tiene disparo y/o informe seteado. 
+	 * @param transicion transicion para agregar.
+	 */
+	public void addTransicion(final TransicionProceso transicion) {
+<span class="fc bfc" id="L68" title="All 4 branches covered.">		if (transicion.getDisparo() || transicion.getInforme()) {</span>
+<span class="fc" id="L69">			this.transiciones.add(transicion);	</span>
+		}
+<span class="fc" id="L71">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

@@ -1,0 +1,16 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.DefinicionProcesosTest" tests="5" failures="0" errors="0" timestamp="2014-02-13T11:45:24" hostname="FUREYNAC" time="2.549">
+  <properties/>
+  <testcase name="testSetIdHiloActual" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.DefinicionProcesosTest" time="0.653"/>
+  <testcase name="testGenerarArchivoHilos" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.DefinicionProcesosTest" time="0.698"/>
+  <testcase name="testIdHiloExistente" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.DefinicionProcesosTest" time="0.36"/>
+  <testcase name="testDefinicionProcesos" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.DefinicionProcesosTest" time="0.544"/>
+  <testcase name="testCrearYRemoverHilo" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.DefinicionProcesosTest" time="0.291"/>
+  <system-out><![CDATA[
+
+
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

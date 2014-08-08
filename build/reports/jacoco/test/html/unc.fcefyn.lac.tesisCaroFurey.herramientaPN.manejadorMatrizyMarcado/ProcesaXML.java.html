@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProcesaXML.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado</a> &gt; <span class="el_source">ProcesaXML.java</span></div><h1>ProcesaXML.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+/**
+ * Clase que procesa un XML mediante el handler SAX.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+public class ProcesaXML {
+/**
+ * Metodo que procesa el archivo XML.
+ * @param manejador
+ * @param filePath
+ */
+<span class="fc" id="L21">	public ProcesaXML(final DefaultHandler manejador, final String filePath) {</span>
+
+		try {
+			// Creamos la factoria de parseadores por defecto
+<span class="fc" id="L25">			final XMLReader reader = XMLReaderFactory.createXMLReader();</span>
+			// Añadimos nuestro manejador al reader
+<span class="fc" id="L27">			reader.setContentHandler(manejador); </span>
+			// Procesamos el xml
+<span class="fc" id="L29">			reader.parse(new InputSource(new FileInputStream(filePath)));</span>
+<span class="nc" id="L30">		} catch (SAXException e) {</span>
+<span class="nc" id="L31">			e.printStackTrace();</span>
+<span class="nc" id="L32">		} catch (IOException e) {</span>
+<span class="nc" id="L33">			e.printStackTrace();</span>
+<span class="pc" id="L34">		}</span>
+<span class="fc" id="L35">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

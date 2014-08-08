@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<definicionProcesos>
+  <net id="net1">
+    <name>
+      <text>nombre de red</text>
+    </name>
+    <process id="procesoJuan">
+      <transition>t1</transition>
+      <transition>t5</transition>
+      <transition>t6</transition>
+      <transition>t10</transition>
+    </process>
+  <process id="este no es juan">
+      <transition>hola</transition>
+      <transition>chau</transition>
+    </process>
+  </net>
+</definicionProcesos>

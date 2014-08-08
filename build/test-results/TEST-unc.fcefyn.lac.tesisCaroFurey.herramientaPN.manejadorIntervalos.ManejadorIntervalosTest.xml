@@ -1,0 +1,7 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorIntervalos.ManejadorIntervalosTest" tests="1" failures="0" errors="0" timestamp="2014-02-13T11:45:24" hostname="FUREYNAC" time="0.005">
+  <properties/>
+  <testcase name="testManejadorIntervalos" classname="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorIntervalos.ManejadorIntervalosTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

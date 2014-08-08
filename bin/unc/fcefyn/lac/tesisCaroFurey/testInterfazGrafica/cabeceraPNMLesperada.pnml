@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<pnml>
+	<net id="net1">
+		<name>
+			<text>cabeceraPNML.pnml</text>
+		</name>
+		<page id="page1-net1">
+		</page>
+	</net>
+</pnml>

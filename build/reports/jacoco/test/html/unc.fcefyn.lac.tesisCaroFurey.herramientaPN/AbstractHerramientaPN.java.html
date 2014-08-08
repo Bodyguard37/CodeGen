@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractHerramientaPN.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN</a> &gt; <span class="el_source">AbstractHerramientaPN.java</span></div><h1>AbstractHerramientaPN.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.herramientaPN;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorEtiquetas.Etiqueta;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorEtiquetas.ManejadorEtiquetas;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorIntervalos.Intervalo;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorIntervalos.ManejadorIntervalos;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado
+	.ManejadorXMLMatrizYMarcado;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado
+	.MatrizIncidenciaMarcadoInicial;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado.ProcesaXML;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesos;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.Proceso;
+
+/**
+ * Clase abstracta para el manejo de redes de petri.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+<span class="fc" id="L24">public abstract class AbstractHerramientaPN {</span>
+	/**
+	 * Formatos soportados por la herramienta.
+	 */
+	protected String[] formatosSoportados;
+	/**
+	 * Vectores de invariantes de plaza de la red de petri.
+	 */
+	protected ArrayList&lt;ArrayList&lt;String&gt;&gt; invariantesPlaza;
+
+	/**
+	 * Vectores de invariantes de transicion de la red de petri.
+	 */
+	protected ArrayList&lt;ArrayList&lt;String&gt;&gt; invariantesTransicion;
+	/**
+	 * Propiedad de vivacidad de la red de petri.
+	 */
+	protected Boolean vivacidad;
+	/**
+	 * Propiedad de acotamiento de la red de petri.
+	 */
+	protected Boolean acotada;
+	/**
+	 * Propiedad de reversibilidad de la red de petri.
+	 */
+	protected Boolean reversible;
+	/**
+	 * Propiedad de interbloqueo de la red de Petri.
+	 */
+	protected Boolean interbloqueo;
+	/**
+	 * Texto legible por personas con el análisis de alcanzabilidad.
+	 */
+	protected String analisisAlcanzabilidad;
+	/**
+	 * Texto legible por personas con el análisis Estructural.
+	 */
+	protected String analisisEstructural;
+	/**
+	 * Intancia con los datos de la matriz de incidencia y el marcado inicial.
+	 */
+	protected MatrizIncidenciaMarcadoInicial matrizIncidenciaMarcadoInicial;
+	/**
+	 * manejadorXMLMatrizYMarcado un manejador.
+	 */
+	private ManejadorXMLMatrizYMarcado manejadorXMLMatrizYMarcado;
+	/**
+	 * Un manejador de procesos.
+	 */
+	private ManejadorProcesos manejadorProcesos;
+	/**
+	 * Un manejador de etuquetas.
+	 */
+	private ManejadorEtiquetas manejadorEtiquetas;
+	/**
+	 * Un manejador de intervalos.
+	 */
+	private ManejadorIntervalos manejadorIntervalos;
+	/**
+	 * Getter.
+	 * @return	formatosSoportados formatos de red de petri soportados por la
+	 * herramienta.
+	 */
+	public final String[] getFormatosSoportados() {
+<span class="nc" id="L88">		return this.formatosSoportados;</span>
+	}
+	/**
+	 * Getter.
+	 * @return the invariantesPlaza
+	 */
+	public final ArrayList&lt;ArrayList&lt;String&gt;&gt; getInvariantesPlaza() {
+<span class="fc" id="L95">		return this.invariantesPlaza;</span>
+	}
+	/**
+	 * Getter.
+	 * @return the invariantesTransicion
+	 */
+	public final ArrayList&lt;ArrayList&lt;String&gt;&gt; getInvariantesTransicion() {
+<span class="fc" id="L102">		return this.invariantesTransicion;</span>
+	}
+	/**
+	 * Getter.
+	 * @return vivacidad
+	 */
+	public final Boolean getVivacidad() {
+<span class="fc" id="L109">		return this.vivacidad;</span>
+	}
+	/**
+	 * Getter.
+	 * @return acotada
+	 */
+	public final Boolean getAcotada() {
+<span class="fc" id="L116">		return this.acotada;</span>
+	}
+	/**
+	 * Getter.
+	 * @return reversible
+	 */
+	public final Boolean getReversible() {
+<span class="fc" id="L123">		return this.reversible;</span>
+	}
+	/**
+	 * Getter.
+	 * @return interbloqueo
+	 */
+	public final Boolean getInterbloqueo() {
+<span class="fc" id="L130">		return this.interbloqueo;</span>
+	}
+	/**
+	 * Getter.
+	 * @return etiquetas
+	 */
+	public final ArrayList&lt;Etiqueta&gt; getEtiquetas() {
+<span class="fc" id="L137">		return this.manejadorEtiquetas.getEtiquetas();</span>
+	}
+	/**
+	 * Getter.
+	 * @return intervalos.
+	 */
+	public final ArrayList&lt;Intervalo&gt; getIntervalos() {
+<span class="nc" id="L144">		return this.manejadorIntervalos.getIntervalos();</span>
+	}
+
+	/**
+	 * Getter.
+	 * @return Vector de disparos automáticos.
+	 */
+	public final int[] getVectorDisparosAtomaticos() {
+		//Se genera vector con tamaño igual a cantidad de transiciones.
+<span class="fc" id="L153">		final int[] disparosAutomaticos = </span>
+				new int[this.manejadorEtiquetas.getEtiquetas().size()];
+		//Se genera un iterator con el array list de etiquetas.
+<span class="fc" id="L156">		final Iterator&lt;Etiqueta&gt; etiquetasIt = </span>
+				this.manejadorEtiquetas.getEtiquetas().iterator();
+<span class="fc" id="L158">		System.out.println(&quot;Orden de transiciones&quot;);</span>
+		//Mientras haya otra etiqueta ==&gt; hay otra transicion.
+<span class="fc bfc" id="L160" title="All 2 branches covered.">		while (etiquetasIt.hasNext()) {</span>
+			//salvo el valor de la proxima etiqueta.
+<span class="fc" id="L162">			final Etiqueta actual = etiquetasIt.next();</span>
+			//Obtengo el valor con el idTransicion como key. Ese valor sera
+			//el indice del vector
+<span class="fc" id="L165">			final int indice = this.matrizIncidenciaMarcadoInicial.</span>
+					getTransiciones().get(actual.getIdTransicion()).intValue();
+			/*System.out.println(&quot;id: &quot; + actual.getIdTransicion()
+					+ &quot; colum: &quot; + indice);*/
+			//guardo el valor que represente la etiqueta de 
+			//Disparo = 0/Automatico = 1 en la posicion del vector indicada
+			//por indice.
+<span class="fc bfc" id="L172" title="All 2 branches covered.">			if (actual.getPrimerValor().equals(&quot;A&quot;)) {</span>
+<span class="fc" id="L173">				disparosAutomaticos[indice] = 1;</span>
+			} else {
+<span class="fc" id="L175">				disparosAutomaticos[indice] = 0;</span>
+			}
+<span class="fc" id="L177">		}</span>
+<span class="fc" id="L178">		return disparosAutomaticos;</span>
+	}
+
+	/**
+	 * Getter.
+	 * @return Vector de disparos automátios.
+	 */
+	public final int[] getVectorDisparosSinInforme() {
+		//Se genera vector con tamaño igual a cantidad de transiciones.
+<span class="fc" id="L187">		final int[] disparosSinInforme = </span>
+				new int[this.manejadorEtiquetas.getEtiquetas().size()];
+		//Se genera un iterator con el array list de etiquetas.
+<span class="fc" id="L190">		final Iterator&lt;Etiqueta&gt; etiquetasIt = </span>
+				this.manejadorEtiquetas.getEtiquetas().iterator();
+		//Mientras haya otra etiqueta ==&gt; hay otra transicion.
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		while (etiquetasIt.hasNext()) {</span>
+			//salvo el valor de la proxima etiqueta.
+<span class="fc" id="L195">			final Etiqueta actual = etiquetasIt.next();</span>
+			//Obtengo el valor con el idTransicion como key. Ese valor sera
+			//el indice del vector
+<span class="fc" id="L198">			final int indice = this.matrizIncidenciaMarcadoInicial.</span>
+					getTransiciones().get(actual.getIdTransicion()).intValue();
+			//guardo el valor que represente la etiqueta de 
+			//Disparo = 0/Automatico = 1 en la posicion del vector indicada
+			//por indice.
+<span class="fc bfc" id="L203" title="All 2 branches covered.">			if (actual.getSegundoValor().equals(&quot;N&quot;)) {</span>
+<span class="fc" id="L204">				disparosSinInforme[indice] = 1;</span>
+			} else {
+<span class="fc" id="L206">				disparosSinInforme[indice] = 0;</span>
+			}
+<span class="fc" id="L208">		}</span>
+<span class="fc" id="L209">		return disparosSinInforme;</span>
+	}
+	/**
+	 * Getter.
+	 * @return Analisis de Alcanzabilidad en formato texto para lectura humana.
+	 */
+	public final String getAnalisisAlcanzabilidad() {
+<span class="fc" id="L216">		return this.analisisAlcanzabilidad;</span>
+	}
+	/**
+	 * Getter.
+	 * @return Analisis Estructural en formato texto para lectura humana
+	 */
+	public final String getAnalisisEstructural() {
+<span class="fc" id="L223">		return this.analisisEstructural;</span>
+	}
+	/**
+	 * Abre la herramienta de edicion de Redes de Petri para crear una
+	 * nueva Red de Petri.
+	 * @param pathArchivo Path al archivo de la Red de Petri.
+	 */
+	public final void crearPN(final String pathArchivo) {
+<span class="nc" id="L231">		this.editarPN(pathArchivo);</span>
+<span class="nc" id="L232">	}</span>
+	/**
+	 * Es llamado luego de editar una PN. Llama a los métodos
+	 * actualizarDatosRedPetri y generarMatrizIncidenciaYMarcado.
+	 * @param pathARedPetri Path de la Red de Petri a cargar.
+	 * @param pathAXMLProcesos Path al archivo de procesos.
+	 */
+	public final void cargarRed(final String pathARedPetri,
+			final String pathAXMLProcesos) {
+<span class="fc" id="L241">		final String nuevoPath = this.convertirAPNML(pathARedPetri);</span>
+<span class="fc" id="L242">		this.actualizarDatosRedPetri(nuevoPath);</span>
+<span class="fc" id="L243">		this.generarMatrizIncidenciaYMarcado(nuevoPath);</span>
+
+<span class="fc" id="L245">		this.manejadorXMLMatrizYMarcado = new ManejadorXMLMatrizYMarcado();</span>
+<span class="fc" id="L246">		this.manejadorProcesos = new ManejadorProcesos(pathAXMLProcesos);</span>
+<span class="fc" id="L247">		this.manejadorEtiquetas = new ManejadorEtiquetas(nuevoPath);</span>
+<span class="fc" id="L248">		this.manejadorIntervalos = new ManejadorIntervalos(nuevoPath);</span>
+<span class="fc" id="L249">	}</span>
+	/**
+	 * Abre la herramienta de edicion de Redes de Petri para editar la red de
+	 * petri indicada por path.
+	 * @param path Path de la Red de Petri a editar
+	 */
+	public final void editarPN(final String path) {
+<span class="nc" id="L256">		this.llamarEditor(path);</span>
+<span class="nc" id="L257">	}</span>
+	//INTERACCION CON MANEJADOR MATRIZ Y MARCADO
+	/**
+	 * Genera el objeto matrizIncidenciaMarcadoInicial.
+	 * @param path Path de la Red de Petri a editar
+	 */
+	private void generarMatrizIncidenciaYMarcado(final String path) {
+<span class="fc" id="L264">		final ManejadorXMLMatrizYMarcado manejador =</span>
+			new ManejadorXMLMatrizYMarcado();
+<span class="fc" id="L266">		new ProcesaXML(manejador, path);</span>
+<span class="fc" id="L267">		this.matrizIncidenciaMarcadoInicial = manejador.getMatriz();</span>
+<span class="fc" id="L268">	}</span>
+	/**
+	 * Getter.
+	 * @return Matriz de Incidencia Positiva
+	 */
+	public final int[][] getMatrizIncidenciaPositiva() {
+<span class="fc" id="L274">		return this.matrizIncidenciaMarcadoInicial.getMatrizPositiva();</span>
+	}
+	/**
+	 * Getter.
+	 * @return Matriz de Incidencia Negativa
+	 */
+	public final int[][] getMatrizIncidenciaNegativa() {
+<span class="fc" id="L281">		return this.matrizIncidenciaMarcadoInicial.getMatrizNegativa();</span>
+	}
+	/**
+	 * Getter.
+	 * @return Marcado Inicial
+	 */
+	public final int[] getMarcadoInicial() {
+<span class="fc" id="L288">		return this.matrizIncidenciaMarcadoInicial.getMarcado();</span>
+	}
+	/**
+	 * Getter.
+	 * @return Marcado Transiciones
+	 */
+	public final HashMap&lt;String, Integer[]&gt; getPlazas() {
+<span class="nc" id="L295">		return this.matrizIncidenciaMarcadoInicial.getPlazas();</span>
+	}
+	/**
+	 * Getter.
+	 * @return Marcado Transiciones
+	 */
+	public final HashMap&lt;String, Integer&gt; getTransiciones() {
+<span class="fc" id="L302">		return this.matrizIncidenciaMarcadoInicial.getTransiciones();</span>
+	}
+	/**
+	 * Getter.
+	 * @return String con la descripcion de las matrices de incidencia y el
+	 * marcado inicial de la red.
+	 */
+	public final String matrizIncidenciaMarcadoInicialComoString() {
+<span class="fc" id="L310">		return this.matrizIncidenciaMarcadoInicial.matrizYMarcadoComoString();</span>
+	}
+	//INTERCACCION CON MANEJADOR de PROCESOS
+	/**
+	 * Getter.
+	 * @return los procesos
+	 */
+	public final ArrayList&lt;Proceso&gt; getProcesos() {
+<span class="fc" id="L318">		return this.manejadorProcesos.getProcesos();</span>
+	}
+	/**
+	 * Agregar un proceso al archivo de procesos de la red y a la variable de
+	 * procesos de HerramientaPN.
+	 * @param proceso Proceso a agregar.
+	 * @param pathAXMLProcesos path del archivo de procesos.
+	 */
+	public final void agregarProceso(final Proceso proceso,
+			final String pathAXMLProcesos) {
+<span class="nc" id="L328">		this.manejadorProcesos.agregarProceso(proceso, pathAXMLProcesos);</span>
+<span class="nc" id="L329">	}</span>
+	/**
+	 * Remover un proceso.
+	 * @param proceso Proceso a remover.
+	 * @param xmlFilePath path del archivo 
+	 * @param pathAXMLProcesos 
+	 */
+	public final void borrarProceso(final Proceso proceso,
+			final String xmlFilePath, final String pathAXMLProcesos) {
+<span class="nc" id="L338">		this.manejadorProcesos.borrarProceso(proceso, pathAXMLProcesos);</span>
+<span class="nc" id="L339">	}</span>
+	/**
+	 * Actualizar un proceso.
+	 * @param procesoViejo Proceso a actualizar.
+	 * @param procesoNuevo Proceso que contiene los nuevos datos.
+	 * @param pathAXMLProcesos path del archivo XML de procesos.
+	 */
+	public final void actualizarProceso(final Proceso procesoViejo,
+		final Proceso procesoNuevo, final String pathAXMLProcesos) {
+<span class="nc" id="L348">		this.manejadorProcesos.actualizarProceso(procesoViejo, procesoNuevo,</span>
+				pathAXMLProcesos);
+<span class="nc" id="L350">	}</span>
+	//METODOS ABSTRACTOS
+	/**
+	 * Abre la herramienta de edicion de Redes de Petri para crear una nueva
+	 * Red de Petri.
+	 * Debe implementarse en la clase hija.
+	 * @param path Path del archivo de la red de Petri.
+	 */
+	public abstract void llamarEditor(String path);
+	/**
+	 * Método el cual se deberán cargar los valores de todos los atributos de
+	 * ésta clase. Dichos atributos serán puestos a disposición de cualquier
+	 * clase mediante los correspondientes getters.
+	 * Debe implementarse en la clase hija.
+	 * @param path Path del archivo de la red de Petri.
+	 */
+	public abstract void actualizarDatosRedPetri(String path);
+	/**
+	 * Utiliza la herramienta de conversion de formatos de Red de Petri para
+	 * convertir desde algun formato soportado al formato estandar PNML.
+	 * Debe implementarse en la clase hija.
+	 * @param archivo Path del archivo a convertir.
+	 * @return Path al nuevo archivo.
+	 */
+	public abstract String convertirAPNML(String archivo);
+	/**
+	 * Utiliza la herramienta de conversion de formatos de Red de Petri para
+	 * obtener una red dada en algun formato soportado en formato de texto NET.
+	 * @param archivoFuente Red de Petri que se desea mostrar.
+	 * @return Texto con la descripcion gráfica de la Red de Petri.
+	 */
+	public abstract String mostrarEnFormatoNET(String archivoFuente);
+	/**
+	 * Reemplaza archivo de procesos.
+	 * @param procesos procesos nuevos.
+	 */
+	public void reemplazarArchivoXML(final ArrayList&lt;Proceso&gt; procesos) {
+<span class="fc" id="L387">		this.manejadorProcesos.reemplazarArchivoXML(procesos);</span>
+<span class="fc" id="L388">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

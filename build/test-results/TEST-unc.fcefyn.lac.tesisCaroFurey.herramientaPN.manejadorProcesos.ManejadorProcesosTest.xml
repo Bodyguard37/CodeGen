@@ -1,0 +1,11 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesosTest" tests="5" failures="0" errors="0" timestamp="2014-02-13T11:45:24" hostname="FUREYNAC" time="0.02">
+  <properties/>
+  <testcase name="testVerificarQueDosProcesosSonLeidos" classname="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesosTest" time="0.004"/>
+  <testcase name="testVerificarQueArrayTransicionesProceso1NoEsVacio" classname="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesosTest" time="0.003"/>
+  <testcase name="testVerificarQueArrayTransicionesProceso0NoEsVacio" classname="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesosTest" time="0.003"/>
+  <testcase name="testValoresTransicionesProceso0" classname="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesosTest" time="0.004"/>
+  <testcase name="testValoresTransicionesProceso1" classname="unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.ManejadorProcesosTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

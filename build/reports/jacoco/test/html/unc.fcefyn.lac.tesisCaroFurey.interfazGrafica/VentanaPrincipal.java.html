@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>VentanaPrincipal.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.interfazGrafica</a> &gt; <span class="el_source">VentanaPrincipal.java</span></div><h1>VentanaPrincipal.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.interfazGrafica;
+
+import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+
+import unc.fcefyn.lac.tesisCaroFurey.generacionCodigo.GeneradorCodigo;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.AbstractHerramientaPN;
+/**
+ * Ventana principal de la aplicacion. Contiene todos las instancias de los
+ * objetos necesarios.
+ * @author Caro, Maria Florencia &amp; Furey, Ignacio
+ */
+public class VentanaPrincipal {
+	
+	/**
+	 * Area de texto para mostrar resultados.
+	 */
+	protected JTextArea textArea;
+	
+	/**
+	 * Red actual con la que se esta trabajando. Es un archivo con la red
+	 * que se desea usar para desarrollar el codigo.
+	 */
+	protected File actualPN;
+
+	/**
+	 * JFrame de la ventana principal.
+	 */
+	private JFrame frmProyctointegrador;
+
+	/**
+	 * Jbutton para crear una nueva PN.
+	 */
+	private JButton btnCrearPn;
+
+	/**
+	 * Instancia de la herramienta de analisis de redes de petri.
+	 * Se utiliza para obtener diferentes analisis e informacion
+	 * de la red de petri con la que se trabaja.
+	 */
+	private AbstractHerramientaPN herramientaRedPetri;
+
+	/**
+	 * Instancia de generacion de codigo. Dpendiendo de que subclase de
+	 * GeneradorCodigo se instancie en esta variable sera el lenguaje y modelo
+	 * de generacion de codigo que la herramienta implementara.
+	 */
+	private GeneradorCodigo generadorCodigo;
+
+	/**
+	 * JButton de definicion de hilos.
+	 */
+	private JButton btnDefinirProcesos;
+
+	/**
+	 * JButton de generacion de codigo.
+	 */
+	private JButton btnGenerarCodigo;
+
+	/**
+	 * JButton para obtener la matriz de incidencia y marcado inicial.
+	 */
+	private JButton btnMatriz;
+
+	/**
+	 * JButton para obtener analisis estructural: Invariantes de transicion y
+	 * plaza.
+	 */
+	private JButton btnAnalisisEstructural;
+
+	/**
+	 * JButton para obtener analisis de alcanzabilidad: vivacidad, interbloqueo,
+	 * deadlock, trampas, sifones, grafo de estados/clases, etc.
+	 */
+	private JButton btnAnalisisDeAlcanzabilidad;
+
+	/**
+	 * JButton para abrir una herramienta grafica de edicion/simulacion de PN.
+	 */
+	private JButton btnAbrirSimularPn;
+	//private final Action action = new SwingAction();
+
+	/**
+	 * Class contructor.
+	 * @param hpn Instancia de la herramienta de analisis de redes de petri
+	 * a utilizar.
+	 * @param gc Instancia de el generador de codigo.
+	 */
+	public VentanaPrincipal(final AbstractHerramientaPN hpn,
+<span class="fc" id="L113">			final GeneradorCodigo gc) {</span>
+		//Se establece un LookAndFeel nativo al sistema operativo en uso.
+        try {
+<span class="fc" id="L116">            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());</span>
+<span class="nc" id="L117">        } catch (Exception ex) {</span>
+<span class="nc" id="L118">            System.err.println(ex);</span>
+<span class="fc" id="L119">        }</span>
+<span class="fc" id="L120">		this.herramientaRedPetri = hpn;</span>
+<span class="fc" id="L121">		this.generadorCodigo = gc;</span>
+<span class="fc" id="L122">        initialize();</span>
+<span class="fc" id="L123">		this.frmProyctointegrador.setVisible(true);</span>
+<span class="fc" id="L124">	}</span>
+
+	/**
+	 * Inicializa los contenidos del frame.
+	 */
+	private void initialize() {
+<span class="fc" id="L130">		this.frmProyctointegrador = new JFrame();</span>
+<span class="fc" id="L131">		this.frmProyctointegrador.setIconImage(Toolkit.getDefaultToolkit().</span>
+
+				getImage(VentanaPrincipal.class.getResource(
+					&quot;/javax/swing/plaf/metal/icons/ocean/hardDrive.gif&quot;)));
+<span class="fc" id="L135">		this.frmProyctointegrador.setTitle(&quot;CodGenTPN&quot;);</span>
+<span class="fc" id="L136">		this.frmProyctointegrador.setBounds(100, 100, 558, 387);</span>
+<span class="fc" id="L137">		this.frmProyctointegrador.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+
+<span class="fc" id="L139">		final JMenuBar menuBar = new JMenuBar();</span>
+<span class="fc" id="L140">		this.frmProyctointegrador.setJMenuBar(menuBar);</span>
+		//Menú archivo
+<span class="fc" id="L142">		final JMenu mnArchivo = new JMenu(&quot;Archivo&quot;);</span>
+<span class="fc" id="L143">		menuBar.add(mnArchivo);</span>
+
+		//Menú Archivo -&gt; abrir
+<span class="fc" id="L146">		final JMenuItem mntmAbrir = new JMenuItem(&quot;Abrir&quot;);</span>
+<span class="fc" id="L147">		mntmAbrir.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L149">				final ExploradorArchivoAbrir explorar =</span>
+						new ExploradorArchivoAbrir();
+<span class="nc" id="L151">				final java.io.File f = explorar.getFile();</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">				if (f != null) {</span>
+<span class="nc" id="L153">					setActualPN(f);</span>
+				}
+<span class="nc" id="L155">			}</span>
+		});
+<span class="fc" id="L157">		mnArchivo.add(mntmAbrir);</span>
+
+		//Menú Archivo -&gt; guardar
+<span class="fc" id="L160">		final JMenuItem mntmGuardarResultados =</span>
+				new JMenuItem(&quot;Guardar resultados&quot;);
+<span class="fc" id="L162">		mntmGuardarResultados.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L164">				final ExploradorArchivoGuardar guardarResultados =</span>
+						new ExploradorArchivoGuardar(&quot;Guardar Resultados&quot;,
+								&quot;Archivo de Texto&quot;, &quot;.txt&quot;);
+<span class="nc" id="L167">				final java.io.File f = guardarResultados.getFile(&quot;.txt&quot;);</span>
+				try {
+<span class="nc" id="L169">					f.createNewFile();</span>
+<span class="nc" id="L170">					escribirResultadosenArchivo(f);</span>
+<span class="nc" id="L171">				} catch (IOException e1) {</span>
+<span class="nc" id="L172">					e1.printStackTrace();</span>
+<span class="nc" id="L173">				}</span>
+<span class="nc" id="L174">			}</span>
+		});
+<span class="fc" id="L176">		mnArchivo.add(mntmGuardarResultados);</span>
+		//Menú Archivo -&gt; salir
+<span class="fc" id="L178">		final JMenuItem mntmSalir =	new JMenuItem(&quot;Salir&quot;);</span>
+<span class="fc" id="L179">		mntmSalir.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {	
+<span class="nc" id="L181">				final int confirmarSalir = JOptionPane.showConfirmDialog(mntmAbrir,</span>
+						&quot;¿Está seguro que desea salir?&quot;, &quot;Salir&quot;,  JOptionPane.YES_NO_OPTION);
+<span class="nc bnc" id="L183" title="All 2 branches missed.">				if (JOptionPane.OK_OPTION == confirmarSalir) {</span>
+<span class="nc" id="L184">					System.exit(0);</span>
+				}
+	
+<span class="nc" id="L187">			}</span>
+		});
+<span class="fc" id="L189">		mnArchivo.add(mntmSalir);</span>
+
+<span class="fc" id="L191">		final JMenu mnAcciones = new JMenu(&quot;Acciones&quot;);</span>
+<span class="fc" id="L192">		menuBar.add(mnAcciones);</span>
+
+<span class="fc" id="L194">		final JMenuItem mntmLimpiarResultados =</span>
+				new JMenuItem(&quot;Limpiar resultados&quot;);
+<span class="fc" id="L196">		mntmLimpiarResultados.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L198">				limpiarResultados();</span>
+<span class="nc" id="L199">			}</span>
+		});
+<span class="fc" id="L201">		mnAcciones.add(mntmLimpiarResultados);</span>
+
+<span class="fc" id="L203">		final JMenu mnAyuda = new JMenu(&quot;Ayuda&quot;);</span>
+<span class="fc" id="L204">		menuBar.add(mnAyuda);</span>
+		
+<span class="fc" id="L206">		final JMenuItem mntmAyuda = new JMenuItem(&quot;Manual de Uso&quot;);</span>
+<span class="fc" id="L207">		mntmAyuda.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L209">				final String fileName = &quot;ManualDeUso.pdf&quot;;</span>
+<span class="nc" id="L210">				final URL pathAManualDeUso = getClass().getClassLoader().getResource(fileName);</span>
+				try {
+<span class="nc" id="L212">					Desktop.getDesktop().open(new File(pathAManualDeUso.getFile()));</span>
+<span class="nc" id="L213">				} catch (IOException e1) {</span>
+<span class="nc" id="L214">					e1.printStackTrace();</span>
+<span class="nc" id="L215">				}</span>
+<span class="nc" id="L216">			}</span>
+		});
+<span class="fc" id="L218">		mnAyuda.add(mntmAyuda);</span>
+		////
+<span class="fc" id="L220">		final JMenuItem mntmAyuda1 = new JMenuItem(&quot;About Us ...&quot;);</span>
+<span class="fc" id="L221">		mntmAyuda1.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L223">				JOptionPane.showMessageDialog(null, &quot;CodGenTPN: Code Generator&quot; +</span>
+						&quot;for Petri nets and Time Petri nets\n&quot; +
+						&quot;Version: Release 1.0\n&quot; +
+						&quot;Build id: 2014-01-20\n&quot; +
+						&quot;Author: M.Florencia Caro &amp; Ignacio Furey\n&quot; +
+						&quot;(c) Copyright CodGenTPN contributors and others.&quot; +
+						&quot;All rights reserved.&quot;,	&quot;CodGenTPN About Us..&quot;,
+						JOptionPane.INFORMATION_MESSAGE);				
+<span class="nc" id="L231">			}</span>
+		});
+<span class="fc" id="L233">		mnAyuda.add(mntmAyuda1);	</span>
+		
+
+<span class="fc" id="L236">		final GridBagLayout gridBagLayout = new GridBagLayout();</span>
+<span class="fc" id="L237">		gridBagLayout.columnWidths = new int[]{0, 0, 0};</span>
+<span class="fc" id="L238">		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};</span>
+<span class="fc" id="L239">		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};</span>
+<span class="fc" id="L240">		gridBagLayout.rowWeights = new double[]</span>
+		{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 4.9E-324};
+<span class="fc" id="L242">		this.frmProyctointegrador.getContentPane().setLayout(gridBagLayout);</span>
+
+<span class="fc" id="L244">		this.btnCrearPn = new JButton(&quot;Crear PN&quot;);</span>
+<span class="fc" id="L245">		this.btnCrearPn.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+				//Pide un nuevo archivo de red
+<span class="nc" id="L248">				final ExploradorArchivoGuardar explorar =</span>
+						new ExploradorArchivoGuardar(&quot;Nueva red&quot;,
+								&quot;Petri Net Markup Language - PNML&quot;, &quot;pnml&quot;);
+<span class="nc" id="L251">				final java.io.File f = explorar.getFile(&quot;.pnml&quot;);</span>
+				try {
+<span class="nc" id="L253">					f.createNewFile();</span>
+<span class="nc" id="L254">					escribirCabeceraPNML(f);</span>
+<span class="nc" id="L255">					herramientaRedPetri.crearPN(f.getAbsolutePath());</span>
+<span class="nc" id="L256">					setActualPN(f);</span>
+<span class="nc" id="L257">				} catch (IOException ex) {</span>
+<span class="nc" id="L258">					JOptionPane.showMessageDialog(null, &quot;Permiso denegado&quot;,</span>
+							&quot;ERROR&quot;, JOptionPane.ERROR_MESSAGE);
+					//ex.printStackTrace();
+<span class="nc" id="L261">				}</span>
+<span class="nc" id="L262">			}</span>
+		});
+<span class="fc" id="L264">		final GridBagConstraints gbcBtnCrearPn1 = new GridBagConstraints();</span>
+<span class="fc" id="L265">		gbcBtnCrearPn1.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L266">		gbcBtnCrearPn1.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L267">		gbcBtnCrearPn1.gridx = 1;</span>
+<span class="fc" id="L268">		gbcBtnCrearPn1.gridy = 0;</span>
+<span class="fc" id="L269">		this.frmProyctointegrador.getContentPane().add(this.btnCrearPn, gbcBtnCrearPn1);</span>
+
+<span class="fc" id="L271">		this.btnAbrirSimularPn = new JButton(&quot;Editar/Simular PN&quot;);</span>
+<span class="fc" id="L272">		this.btnAbrirSimularPn.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent arg0) {
+<span class="nc" id="L274">				editarSimularPN();</span>
+<span class="nc" id="L275">				setActualPN(actualPN);</span>
+<span class="nc" id="L276">			}</span>
+		});
+<span class="fc" id="L278">		final GridBagConstraints gbcBtnAbrirSimularPn =</span>
+								new GridBagConstraints();
+<span class="fc" id="L280">		gbcBtnAbrirSimularPn.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L281">		gbcBtnAbrirSimularPn.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L282">		gbcBtnAbrirSimularPn.gridx = 1;</span>
+<span class="fc" id="L283">		gbcBtnAbrirSimularPn.gridy = 1;</span>
+<span class="fc" id="L284">		this.frmProyctointegrador.getContentPane().add(this.btnAbrirSimularPn,</span>
+				gbcBtnAbrirSimularPn);
+
+<span class="fc" id="L287">		this.btnAnalisisDeAlcanzabilidad = new JButton(</span>
+				&quot;Analisis de alcanzabilidad&quot;);
+<span class="fc" id="L289">		this.btnAnalisisDeAlcanzabilidad.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L291">				analisisAlcanzabilidad();</span>
+<span class="nc" id="L292">			}</span>
+		});
+<span class="fc" id="L294">		final GridBagConstraints gbcBtnAnalisisDeAlcanzabilidad =</span>
+				new GridBagConstraints();
+<span class="fc" id="L296">		gbcBtnAnalisisDeAlcanzabilidad.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L297">		gbcBtnAnalisisDeAlcanzabilidad.gridx = 1;</span>
+<span class="fc" id="L298">		gbcBtnAnalisisDeAlcanzabilidad.gridy = 2;</span>
+<span class="fc" id="L299">		this.frmProyctointegrador.getContentPane().</span>
+			add(this.btnAnalisisDeAlcanzabilidad, gbcBtnAnalisisDeAlcanzabilidad);
+
+<span class="fc" id="L302">		this.btnAnalisisEstructural = new JButton(&quot;Analisis Estructural&quot;);</span>
+<span class="fc" id="L303">		this.btnAnalisisEstructural.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L305">				analisisEstructural();</span>
+<span class="nc" id="L306">			}</span>
+		});
+<span class="fc" id="L308">		final GridBagConstraints gbcBtnAnalisisEstructural =</span>
+				new GridBagConstraints();
+<span class="fc" id="L310">		gbcBtnAnalisisEstructural.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L311">		gbcBtnAnalisisEstructural.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L312">		gbcBtnAnalisisEstructural.gridx = 1;</span>
+<span class="fc" id="L313">		gbcBtnAnalisisEstructural.gridy = 3;</span>
+<span class="fc" id="L314">		this.frmProyctointegrador.getContentPane().add(this.btnAnalisisEstructural,</span>
+				gbcBtnAnalisisEstructural);
+
+<span class="fc" id="L317">		this.btnMatriz = new JButton(&quot;Matriz y marcado&quot;);</span>
+<span class="fc" id="L318">		this.btnMatriz.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L320">				matrizYMarcado();</span>
+<span class="nc" id="L321">			}</span>
+		});
+<span class="fc" id="L323">		final GridBagConstraints gbcBtnMatriz = new GridBagConstraints();</span>
+<span class="fc" id="L324">		gbcBtnMatriz.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L325">		gbcBtnMatriz.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L326">		gbcBtnMatriz.gridx = 1;</span>
+<span class="fc" id="L327">		gbcBtnMatriz.gridy = 4;</span>
+<span class="fc" id="L328">		this.frmProyctointegrador.getContentPane().add(this.btnMatriz,</span>
+				gbcBtnMatriz);
+
+<span class="fc" id="L331">		final JScrollPane scrollPane = new JScrollPane();</span>
+<span class="fc" id="L332">		final GridBagConstraints gbcScrollPane = new GridBagConstraints();</span>
+<span class="fc" id="L333">		gbcScrollPane.gridheight = 8;</span>
+<span class="fc" id="L334">		gbcScrollPane.insets = new Insets(0, 0, 0, 5);</span>
+<span class="fc" id="L335">		gbcScrollPane.fill = GridBagConstraints.BOTH;</span>
+<span class="fc" id="L336">		gbcScrollPane.gridx = 0;</span>
+<span class="fc" id="L337">		gbcScrollPane.gridy = 0;</span>
+<span class="fc" id="L338">		this.frmProyctointegrador.getContentPane().add(scrollPane, gbcScrollPane);</span>
+
+<span class="fc" id="L340">		this.textArea = new JTextArea();</span>
+<span class="fc" id="L341">		this.textArea.setEditable(false);</span>
+<span class="fc" id="L342">		scrollPane.setViewportView(this.textArea);</span>
+<span class="fc" id="L343">		this.frmProyctointegrador.getContentPane().setFocusTraversalPolicy(</span>
+				new FocusTraversalOnArray(new Component[]{this.textArea, this.btnCrearPn,
+					this.btnAbrirSimularPn, this.btnAnalisisDeAlcanzabilidad,
+					this.btnAnalisisEstructural, this.btnMatriz, scrollPane, }));
+<span class="fc" id="L347">		this.frmProyctointegrador.setFocusTraversalPolicy(new FocusTraversalOnArray(</span>
+				new Component[]{this.frmProyctointegrador.getContentPane(),
+					this.btnCrearPn, this.btnAbrirSimularPn,
+					this.btnAnalisisDeAlcanzabilidad, this.btnAnalisisEstructural,
+					this.btnMatriz, scrollPane, this.textArea, menuBar, mnArchivo,
+					mntmAbrir, mnAcciones, mntmLimpiarResultados,
+					mnAyuda, }));
+
+<span class="fc" id="L355">		this.btnGenerarCodigo = new JButton(&quot;Generar C\u00F3digo&quot;);</span>
+<span class="fc" id="L356">		this.btnGenerarCodigo.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L358">				final ExploradorCarpeta explorar = new ExploradorCarpeta();</span>
+<span class="nc" id="L359">				final java.io.File folderFile = explorar.getPath();</span>
+<span class="nc" id="L360">				generadorCodigo.generarCodigo(herramientaRedPetri,</span>
+						folderFile.getAbsolutePath());
+<span class="nc" id="L362">				JOptionPane.showMessageDialog(null, &quot;Podrá &quot; +</span>
+						&quot;encontrar su codigo fuente en: \n&quot; +
+						folderFile.getAbsolutePath(),
+						&quot;GenCod finalizo!&quot;, JOptionPane.INFORMATION_MESSAGE);
+
+<span class="nc" id="L367">			}</span>
+		});
+<span class="fc" id="L369">		final GridBagConstraints gbcBtnNewButton = new GridBagConstraints();</span>
+<span class="fc" id="L370">		gbcBtnNewButton.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L371">		gbcBtnNewButton.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L372">		gbcBtnNewButton.gridx = 1;</span>
+<span class="fc" id="L373">		gbcBtnNewButton.gridy = 6;</span>
+<span class="fc" id="L374">		this.frmProyctointegrador.getContentPane().add(</span>
+				this.btnGenerarCodigo, gbcBtnNewButton);
+
+<span class="fc" id="L377">		this.btnDefinirProcesos = new JButton(&quot;Definir Procesos&quot;);</span>
+<span class="fc" id="L378">		this.btnDefinirProcesos.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(final ActionEvent e) {
+<span class="nc" id="L380">				new DefinicionProcesos(herramientaRedPetri);</span>
+<span class="nc" id="L381">			}</span>
+		});
+<span class="fc" id="L383">		final GridBagConstraints gbcBtnDefinirProcesos = new GridBagConstraints();</span>
+<span class="fc" id="L384">		gbcBtnDefinirProcesos.fill = GridBagConstraints.HORIZONTAL;</span>
+<span class="fc" id="L385">		gbcBtnDefinirProcesos.insets = new Insets(0, 0, 5, 0);</span>
+<span class="fc" id="L386">		gbcBtnDefinirProcesos.gridx = 1;</span>
+<span class="fc" id="L387">		gbcBtnDefinirProcesos.gridy = 5;</span>
+<span class="fc" id="L388">		this.frmProyctointegrador.getContentPane().add(this.btnDefinirProcesos,</span>
+				gbcBtnDefinirProcesos);
+
+<span class="fc" id="L391">		setVisibilidadBotones(false);</span>
+<span class="fc" id="L392">	}</span>
+	/**
+	 * Muestra un resultado dado por string en el area de texto de la ventana.
+	 * @param string resultado a mostrar.
+	 */
+	public void mostrarResultado(final String string) {
+<span class="fc" id="L398">		this.textArea.append(string + &quot;\n&quot;);</span>
+<span class="fc" id="L399">	}</span>
+	/**
+	 * Limpia el área de texto de la ventana.
+	 */
+	public void limpiarResultados() {
+<span class="fc" id="L404">		this.textArea.setText(&quot;&quot;);</span>
+<span class="fc" id="L405">	}</span>
+	/**
+	 * Lee el área de texto de la ventana.
+	 * @return resultado
+	 */
+	public String leerResultados() {
+<span class="fc" id="L411">		final String resultado = this.textArea.getText();</span>
+<span class="fc" id="L412">		return resultado;</span>
+	}
+	/**
+	 * Escribe lo que esta en el área de texto en un archivo de texto.
+	 * @param f archivo
+	 * @throws java.io.IOException
+	 */
+	public void escribirResultadosenArchivo(final File f)
+			throws java.io.IOException {
+<span class="fc" id="L421">		BufferedWriter bw = null;</span>
+
+		try {
+<span class="fc" id="L424">			bw = new BufferedWriter(new FileWriter(f));</span>
+<span class="fc" id="L425">			bw.write(this.leerResultados());</span>
+<span class="fc" id="L426">			bw.close();</span>
+<span class="nc" id="L427">		} catch (java.io.IOException e) {</span>
+<span class="nc" id="L428">			throw new java.io.IOException();</span>
+		} finally {
+<span class="nc" id="L430">			try {</span>
+<span class="pc" id="L431">				bw.close();</span>
+<span class="nc" id="L432">			} catch (IOException e2) {</span>
+<span class="nc" id="L433">				e2.printStackTrace();</span>
+<span class="pc" id="L434">			}</span>
+<span class="nc" id="L435">        }</span>
+<span class="fc" id="L436">	}	</span>
+	/**
+	 * Establece el valor del campo actualPN.
+	 * Limpia la salida de resultados de ventanaPrincipal, luego muestra la
+	 * nueva red abierta por medio de ventanaPrincipal en formato NET.
+	 * @param pn un File con algun formato admitido de PN.
+	 */
+	public void setActualPN(final File pn) {
+		//Limpia la ventana resultados
+<span class="fc" id="L445">		this.limpiarResultados();</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">		if (pn != null) {</span>
+			//Establece el valor de actualPN.
+<span class="fc" id="L448">			this.actualPN = pn;</span>
+			//Muestra la red en formato NET por ventanaPrincipal
+<span class="fc" id="L450">			this.mostrarResultado(</span>
+					this.herramientaRedPetri.mostrarEnFormatoNET(pn.getPath()));
+<span class="fc" id="L452">			final String red = pn.getAbsolutePath();</span>
+<span class="fc" id="L453">			final String procesos = pn.getAbsolutePath().</span>
+					substring(0, pn.getAbsolutePath().lastIndexOf('.')) +
+					&quot;_procesos.xml&quot;;
+<span class="fc" id="L456">			this.herramientaRedPetri.cargarRed(red, procesos);</span>
+<span class="fc" id="L457">			this.setVisibilidadBotones(true);</span>
+<span class="fc" id="L458">		} else {</span>
+<span class="fc" id="L459">			this.mostrarResultado(</span>
+					&quot;ERROR: archivo de red incorrecto&quot;);
+		}
+<span class="fc" id="L462">	}</span>
+	/**
+	 * Abre la red dada en actualPN con el editor de Red de Petri de
+	 * herramientaRedPetri.
+	 */
+	public void editarSimularPN() {
+<span class="pc bpc" id="L468" title="1 of 4 branches missed.">		if (this.actualPN != null &amp;&amp; this.actualPN.canRead()) {</span>
+<span class="nc" id="L469">			this.herramientaRedPetri.editarPN(this.actualPN.getAbsolutePath());</span>
+		} else {
+<span class="fc" id="L471">			this.mostrarResultado(</span>
+					&quot;ERROR: Red de Petri no establecida o path incorrecto&quot;);
+		}
+<span class="fc" id="L474">	}</span>
+	/**
+	 * Realiza un analisis de alcanzabilidad a la Red de Petri dada en actualPN
+	 * con la herramienta de herramientaRedPetri.
+	 */
+	public void analisisAlcanzabilidad() {
+<span class="fc" id="L480">		this.mostrarResultado(this.herramientaRedPetri.getAnalisisAlcanzabilidad());</span>
+<span class="fc" id="L481">	}</span>
+	/**
+	 * Realiza un analisis estructural a la Red de Petri dada en actualPN con la
+	 * herramienta de herramientaRedPetri.
+	 */
+	public void analisisEstructural() {
+<span class="fc" id="L487">		this.mostrarResultado(this.herramientaRedPetri.getAnalisisEstructural());</span>
+<span class="fc" id="L488">	}</span>
+	/**
+	 * Obtiene la matriz de incidencia y el marcado inicial de la red de Petri
+	 * dada en actualPN con la herramienta y los muestra por la ventana de
+	 * resultados.
+	 */
+	protected void matrizYMarcado() {
+<span class="fc" id="L495">		this.mostrarResultado(this.herramientaRedPetri.</span>
+				matrizIncidenciaMarcadoInicialComoString());
+<span class="fc" id="L497">	}</span>
+	/**
+	 * Escribe una cabecera PNML en un archivo nuevo, de esta forma se evita
+	 * que el archivo nuevo este vacio.
+	 *@param file El archivo a ser escrito con la cabecera PNML.
+	 *@throws IOException en caso que halla un error de apertura o escritura
+	 *con el archivo.
+	 */
+	protected void escribirCabeceraPNML(final File file)
+		throws java.io.IOException {
+<span class="fc" id="L507">		BufferedWriter bw = null;</span>
+		try {
+<span class="fc" id="L509">			bw = new BufferedWriter(new FileWriter(file));</span>
+<span class="fc" id="L510">			bw.write(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;ISO-8859-1\&quot;?&gt;&quot; +</span>
+				&quot;\n&lt;pnml&gt;&quot; +
+					&quot;\n\t&lt;net id=\&quot;net1\&quot;&gt;&quot; +
+						&quot;\n\t\t&lt;name&gt;&quot; +
+							&quot;\n\t\t\t&lt;text&gt;&quot; + file.getName() + &quot;&lt;/text&gt;&quot; +
+						&quot;\n\t\t&lt;/name&gt;&quot; +
+						&quot;\n\t\t&lt;page id=\&quot;page1-net1\&quot;&gt;&quot; +
+						&quot;\n\t\t&lt;/page&gt;&quot; +
+					&quot;\n\t&lt;/net&gt;&quot; +
+				&quot;\n&lt;/pnml&gt;&quot;);
+<span class="nc" id="L520">		} catch (java.io.IOException e) {</span>
+<span class="nc" id="L521">			throw new java.io.IOException();</span>
+		} finally {
+<span class="nc" id="L523">			try {</span>
+<span class="pc" id="L524">				bw.close();</span>
+<span class="nc" id="L525">			} catch (IOException e2) {</span>
+<span class="nc" id="L526">				e2.printStackTrace();</span>
+<span class="pc" id="L527">			}</span>
+<span class="nc" id="L528">        }</span>
+<span class="fc" id="L529">	}</span>
+	/**
+	 * Establece la visisbilidad de los botones de la ventana principal.
+	 * @param visibilidad true para habilitar los botones, false caso contrario.
+	 */
+	protected void setVisibilidadBotones(final boolean visibilidad) {
+<span class="fc" id="L535">		this.btnDefinirProcesos.setEnabled(visibilidad);</span>
+<span class="fc" id="L536">		this.btnGenerarCodigo.setEnabled(visibilidad);</span>
+<span class="fc" id="L537">		this.btnMatriz.setEnabled(visibilidad);</span>
+<span class="fc" id="L538">		this.btnAnalisisEstructural.setEnabled(visibilidad);</span>
+<span class="fc" id="L539">		this.btnAnalisisDeAlcanzabilidad.setEnabled(visibilidad);</span>
+<span class="fc" id="L540">		this.btnAbrirSimularPn.setEnabled(visibilidad);</span>
+<span class="fc" id="L541">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

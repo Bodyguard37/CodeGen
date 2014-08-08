@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ManejadorProcesos.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos</a> &gt; <span class="el_source">ManejadorProcesos.java</span></div><h1>ManejadorProcesos.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+/**
+ * Se encarga de escribir y leer el archivo XML de definición de procesos para agregar,
+ * actualizar, borrar y obtener información de los procesos del sistema definidos por
+ * el usuario. Mientras realiza la lectura del archivo XML instancia un
+ *  objeto de la clase Proceso, por cada proceso que lee, agregándole una instancia de
+ *  la clase TransicionProceso por cada transición que forma parte del mismo.
+ *@author María Florencia Caro &amp; Ignacio Furey
+ */
+public class ManejadorProcesos {
+	/**
+	 * establece la cabecera del archivo de procesos xml vacio.
+	 */
+	private static final String CABECERAXML =
+			&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;ISO-8859-1\&quot;&quot; +
+			&quot; standalone=\&quot;no\&quot;?&gt;&quot; +
+			&quot;&lt;definicionProcesos&gt;&quot; +
+				&quot;&lt;net id=\&quot;net1\&quot;&gt;&quot; +
+					&quot;&lt;name&gt;&quot; +
+						&quot;&lt;text&gt;nombre de red&lt;/text&gt;&quot; +
+					&quot;&lt;/name&gt;&quot; +
+				&quot;&lt;/net&gt;&quot; +
+			&quot;&lt;/definicionProcesos&gt;&quot;;
+
+	/**
+	 * Lista de Procesos.
+	 */
+	protected ArrayList&lt;Proceso&gt; procesos;
+	/**
+	 * path del archivo.
+	 */
+	private String path;
+	/**
+	 * Le pasa el path del archivo a leer y lo lee.
+	 * @param pathAXMLProcesos path al archivo xml a leer
+	 */
+<span class="fc" id="L65">	public ManejadorProcesos(final String pathAXMLProcesos) {</span>
+<span class="fc" id="L66">		this.path = pathAXMLProcesos;</span>
+<span class="fc" id="L67">		this.leerProcesosDesdeXML(pathAXMLProcesos);</span>
+<span class="fc" id="L68">	}</span>
+	/**
+	 * Getter.
+	 * @return procesos
+	 */
+	public ArrayList&lt;Proceso&gt; getProcesos() {
+<span class="fc" id="L74">		return this.procesos;</span>
+	}
+
+	/**
+	 * Agregar un proceso al archivo de procesos de la red y a la variable de 
+	 * procesos de HerramientaPN.
+	 * @param proceso Proceso a agregar.
+	 */
+	public final void agregarProceso(final Proceso proceso) {
+<span class="fc" id="L83">		this.agregarProceso(proceso, this.path);</span>
+<span class="fc" id="L84">	}</span>
+
+	/**
+	 * Agregar un proceso al archivo de procesos de la red y a la variable de 
+	 * procesos de HerramientaPN.
+	 * @param proceso Proceso a agregar.
+	 * @param pathAXMLProcesos path del archivo.
+	 */
+	public final void agregarProceso(final Proceso proceso, 
+			final String pathAXMLProcesos) {
+<span class="fc" id="L94">		final Document doc = abrirArchivoProcesosXML(pathAXMLProcesos);</span>
+		//Controla que no exista un proceso con el mismo id.
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">		if (existeProceso(doc, proceso.getId())) {</span>
+<span class="nc" id="L97">			JOptionPane.showMessageDialog(null,</span>
+					&quot;Ya existe un proceso con ese id.&quot;,
+					&quot;ERROR&quot;, JOptionPane.ERROR_MESSAGE);
+		} else {
+<span class="fc" id="L101">			final NodeList red = doc.getElementsByTagName(&quot;net&quot;);</span>
+			//Se genera el nuevo elemento proceso
+<span class="fc" id="L103">	        final Element procesoNuevo = doc.createElement(&quot;process&quot;);</span>
+<span class="fc" id="L104">	        procesoNuevo.setAttribute(&quot;id&quot;, proceso.getId());</span>
+<span class="fc" id="L105">	        procesoNuevo.setAttribute(&quot;runnable&quot;,</span>
+	        		Boolean.toString(proceso.isRunnable()));
+	        //creo un iterator a partir de la lista de transicionesDisparo
+	        //del proceso
+<span class="fc" id="L109">	        final Iterator&lt;TransicionProceso&gt; it = proceso.getTransiciones().iterator();</span>
+	        //creo un iterator a partir de la lista de transiciones
+	        //del proceso
+<span class="fc bfc" id="L112" title="All 2 branches covered.">	        while (it.hasNext()) {</span>
+	        	//creo un nuevo nodo transicion.
+<span class="fc" id="L114">		    	final Element transicionNueva = doc.createElement(&quot;transition&quot;);</span>
+		    	//al nodo transicion le agrego texto con el id de transicion.
+<span class="fc" id="L116">		    	final TransicionProceso auxTransicion = it.next();</span>
+<span class="fc" id="L117">		    	transicionNueva.setAttribute(</span>
+		    			&quot;id&quot;, auxTransicion.getIdTransicion());
+		    	//Creo los nodos disparo y informe.
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		    	if (auxTransicion.getDisparo()) {</span>
+<span class="fc" id="L121">		    		final Element disparo = doc.createElement(&quot;disparo&quot;);</span>
+
+<span class="fc" id="L123">		    		final Element metodo = doc.createElement(&quot;metodo&quot;);</span>
+<span class="fc" id="L124">		    		final Text textoMetodo = doc.createTextNode(</span>
+			    			auxTransicion.getMetodoDisparo());
+<span class="fc" id="L126">			    	metodo.appendChild(textoMetodo);</span>
+<span class="fc" id="L127">			    	disparo.appendChild(metodo);</span>
+
+<span class="fc" id="L129">			    	final Element orden = doc.createElement(&quot;orden&quot;);</span>
+<span class="fc" id="L130">			    	final Text textoOrden = doc.createTextNode(</span>
+			    			auxTransicion.getOrdenDisparo());
+<span class="fc" id="L132">			    	orden.appendChild(textoOrden);</span>
+<span class="fc" id="L133">			    	disparo.appendChild(orden);</span>
+<span class="fc" id="L134">			    	transicionNueva.appendChild(disparo);</span>
+		    	}
+<span class="fc bfc" id="L136" title="All 2 branches covered.">		    	if (auxTransicion.getInforme()) {</span>
+<span class="fc" id="L137">		    		final Element informe = doc.createElement(&quot;informe&quot;);</span>
+
+<span class="fc" id="L139">		    		final Element metodo = doc.createElement(&quot;metodo&quot;);</span>
+<span class="fc" id="L140">		    		final Text textoMetodo = doc.createTextNode(</span>
+			    			auxTransicion.getMetodoInforme());
+<span class="fc" id="L142">			    	metodo.appendChild(textoMetodo);</span>
+<span class="fc" id="L143">			    	informe.appendChild(metodo);</span>
+
+<span class="fc" id="L145">			    	final Element orden = doc.createElement(&quot;orden&quot;);</span>
+<span class="fc" id="L146">			    	final Text textoOrden = doc.createTextNode(</span>
+			    			auxTransicion.getOrdenInforme());
+<span class="fc" id="L148">			    	orden.appendChild(textoOrden);</span>
+<span class="fc" id="L149">			    	informe.appendChild(orden);</span>
+<span class="fc" id="L150">			    	transicionNueva.appendChild(informe);</span>
+		    	}
+		    	//Agrego el nodo de transicion al proceso nuevo.
+<span class="fc" id="L153">		    	procesoNuevo.appendChild(transicionNueva);</span>
+<span class="fc" id="L154">	        }</span>
+	        try {
+		        //Por ultimo agrego el proceso al nodo red del archivo.
+<span class="fc" id="L157">		        red.item(0).appendChild(procesoNuevo);</span>
+<span class="nc" id="L158">	        } catch (Exception e) {</span>
+<span class="nc" id="L159">	        	JOptionPane.showMessageDialog(null, &quot;Archivo xml de procesos &quot; +</span>
+	        		&quot;con formato erroneo o vacio. &quot; +
+	        		&quot;No se encontro nodo &lt;net&gt;&quot;,
+						&quot;ERROR&quot;, JOptionPane.ERROR_MESSAGE);
+<span class="fc" id="L163">	        }</span>
+	        //Guarda los cambios en el archivo.
+<span class="fc" id="L165">	        guardarDatosArchivoProcesosXML(doc, pathAXMLProcesos);</span>
+			//	Agregar el proceso al atributo de procesos.
+<span class="fc" id="L167">			this.procesos.add(proceso);</span>
+		}
+<span class="fc" id="L169">	}</span>
+
+	/**
+	 * Remover un proceso.
+	 * @param proceso Proceso a remover.
+	 * @param pathAXMLProcesos path del archivo que tiene el proceso que hay que
+	 *  borrar.
+	 */
+	public final void borrarProceso(final Proceso proceso, 
+			final String pathAXMLProcesos) {
+<span class="nc" id="L179">		final Document doc = abrirArchivoProcesosXML(pathAXMLProcesos);</span>
+<span class="nc" id="L180">		final NodeList red = doc.getElementsByTagName(&quot;net&quot;);</span>
+<span class="nc" id="L181">		final NodeList nodosProcesos = doc.getElementsByTagName(&quot;process&quot;);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">		for (int i = 0; i &lt; nodosProcesos.getLength(); i = i + 1) {</span>
+<span class="nc" id="L183">			final Element proc = (Element) nodosProcesos.item(i);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">			if (proc.getAttribute(&quot;id&quot;).equals(proceso.getId())) {</span>
+				try {
+<span class="nc" id="L186">					red.item(0).removeChild(proc);</span>
+<span class="nc" id="L187">				} catch (NullPointerException e1) {</span>
+<span class="nc" id="L188">					System.err.println(&quot;Error borrando proceso en XML, no &quot; +</span>
+						&quot;hay nodo &lt;net&gt;.&quot;);
+<span class="nc" id="L190">				}</span>
+			}
+		}
+		//Guarda los cambios en el archivo.
+<span class="nc" id="L194">        guardarDatosArchivoProcesosXML(doc, pathAXMLProcesos);</span>
+		//	BORRAR el proceso del array de procesos
+<span class="nc" id="L196">		this.procesos.remove(proceso);</span>
+<span class="nc" id="L197">	}</span>
+
+	/**
+	 * Actualizar un proceso.
+	 * @param procesoViejo Proceso a actualizar.
+	 * @param procesoNuevo Proceso que contiene los nuevos datos.
+	 * @param pathAXMLProcesos path al archivo xml
+	 */
+	public final void actualizarProceso(final Proceso procesoViejo,
+		final Proceso procesoNuevo, final String pathAXMLProcesos) {
+
+<span class="nc" id="L208">		this.borrarProceso(procesoViejo, pathAXMLProcesos);</span>
+<span class="nc" id="L209">		this.agregarProceso(procesoNuevo, pathAXMLProcesos);</span>
+<span class="nc" id="L210">	}</span>
+
+	/**
+	 * Lee los procesos definidos en el archivo XML dado.
+	 * @param pathAXMLProcesos path al archivo.
+	 */
+	private void leerProcesosDesdeXML(final String pathAXMLProcesos) {
+<span class="fc" id="L217">		this.procesos = new ArrayList&lt;Proceso&gt;();</span>
+<span class="fc" id="L218">		final File xmlFile = new File(pathAXMLProcesos); </span>
+<span class="fc" id="L219">		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();</span>
+<span class="fc" id="L220">		DocumentBuilder dBuilder = null;</span>
+		try {
+<span class="fc" id="L222">			dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="nc" id="L223">		} catch (ParserConfigurationException e1) {</span>
+<span class="nc" id="L224">			e1.printStackTrace();</span>
+<span class="fc" id="L225">		}</span>
+<span class="fc" id="L226">		Document doc = null;</span>
+		try {
+<span class="fc" id="L228">			doc = dBuilder.parse(xmlFile);</span>
+<span class="nc" id="L229">		} catch (SAXException | IOException e1) {</span>
+<span class="nc" id="L230">			crearArchivoProcesosXML(pathAXMLProcesos);</span>
+			try {
+<span class="nc" id="L232">				doc = dBuilder.parse(xmlFile);</span>
+<span class="nc" id="L233">			} catch (SAXException | IOException e2) {</span>
+<span class="nc" id="L234">				e2.printStackTrace();</span>
+<span class="nc" id="L235">			}</span>
+<span class="fc" id="L236">		}</span>
+
+<span class="fc" id="L238">		doc.getDocumentElement().normalize();</span>
+
+		//Nodo &quot;process&quot;
+<span class="fc" id="L241">		final NodeList procesosLeidos = doc.getElementsByTagName(&quot;process&quot;);</span>
+
+<span class="fc bfc" id="L243" title="All 2 branches covered.">		for (int temp = 0; temp &lt; procesosLeidos.getLength(); temp = temp + 1) {</span>
+<span class="fc" id="L244">			final Node process = procesosLeidos.item(temp);</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">			if (process.getNodeType() == Node.ELEMENT_NODE) {</span>
+<span class="fc" id="L246">				final Element eElement1 = (Element) process;</span>
+<span class="fc" id="L247">				final Proceso procesoActual = new </span>
+						Proceso(eElement1.getAttribute(&quot;id&quot;),
+								Boolean.parseBoolean(
+										eElement1.getAttribute(&quot;runnable&quot;)));
+				//Nodo &quot;transition&quot;
+<span class="fc" id="L252">				final NodeList transiciones = procesosLeidos.item(temp).getChildNodes();</span>
+				//recorro todas las transiciones del proceso.
+<span class="fc bfc" id="L254" title="All 2 branches covered.">				for (int temp1 = 0; temp1 &lt; transiciones.getLength(); temp1 = temp1 + 1) {</span>
+<span class="fc" id="L255">					final Node transicion = transiciones.item(temp1);</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">					if (transicion.getNodeType() == Node.ELEMENT_NODE) {</span>
+<span class="fc" id="L257">						final Element eElement2 = (Element) transicion;</span>
+						//Nueva TransicionProceso con el id de transicion
+<span class="fc" id="L259">						final TransicionProceso transicionActual =</span>
+								new TransicionProceso(
+										eElement2.getAttribute(&quot;id&quot;));
+						//Busco el nodo disparo dentro de la transicion
+<span class="fc" id="L263">						final NodeList nodosDisparo =</span>
+								eElement2.getElementsByTagName(&quot;disparo&quot;);
+						try {
+<span class="fc" id="L266">							final Element disparoTransicion =</span>
+									(Element) nodosDisparo.item(0);
+							//busco el metodo de disparo.
+<span class="fc" id="L269">							final NodeList metodo =</span>
+									disparoTransicion.
+										getElementsByTagName(&quot;metodo&quot;);
+<span class="fc" id="L272">							transicionActual.setDisparo(true);</span>
+							try {
+								//Seteo el metodo en la TransicionActual
+<span class="fc" id="L275">								transicionActual.setMetodoDisparo(</span>
+										metodo.item(0).getTextContent());
+<span class="nc" id="L277">							} catch (NullPointerException e) {</span>
+<span class="nc" id="L278">								transicionActual.setMetodoDisparo(&quot;&quot;);</span>
+<span class="fc" id="L279">							}</span>
+							//Busco el orden de disparo.
+<span class="fc" id="L281">							final NodeList orden =</span>
+									disparoTransicion.
+										getElementsByTagName(&quot;orden&quot;);
+							try {
+								//Seteo el orden en la TransicionActual
+<span class="fc" id="L286">								transicionActual.setOrdenDisparo(</span>
+									orden.item(0).getTextContent());
+<span class="nc" id="L288">							} catch (NullPointerException e) {</span>
+<span class="nc" id="L289">								transicionActual.setOrdenDisparo(&quot;&quot;);</span>
+<span class="fc" id="L290">							}</span>
+<span class="fc" id="L291">						} catch (NullPointerException e) {</span>
+<span class="fc" id="L292">							transicionActual.setDisparo(false);</span>
+<span class="fc" id="L293">						}</span>
+
+						//Busco el nodo informe dentro de la transicion
+<span class="fc" id="L296">						final NodeList nodosInforme =</span>
+								eElement2.getElementsByTagName(&quot;informe&quot;);
+						try {
+<span class="fc" id="L299">							final Element informeTransicion =</span>
+									(Element) nodosInforme.item(0);
+							//busco el metodo de disparo.
+<span class="fc" id="L302">							final NodeList metodo =</span>
+									informeTransicion.
+										getElementsByTagName(&quot;metodo&quot;);
+<span class="fc" id="L305">							transicionActual.setInforme(true);</span>
+							try {
+								//Seteo el metodo en la TransicionActual
+<span class="fc" id="L308">								transicionActual.setMetodoInforme(</span>
+										metodo.item(0).getTextContent());
+<span class="nc" id="L310">							} catch (NullPointerException e) {</span>
+<span class="nc" id="L311">								transicionActual.setMetodoInforme(&quot;&quot;);</span>
+<span class="fc" id="L312">							}</span>
+							//busco el orden de Informe.
+<span class="fc" id="L314">							final NodeList orden =</span>
+									informeTransicion.
+										getElementsByTagName(&quot;orden&quot;);
+							try {
+								//Seteo el orden en la TransicionActual
+<span class="fc" id="L319">								transicionActual.setOrdenInforme(</span>
+										orden.item(0).getTextContent());
+<span class="nc" id="L321">							} catch (NullPointerException e) {</span>
+<span class="nc" id="L322">								transicionActual.setOrdenInforme(&quot;&quot;);</span>
+<span class="fc" id="L323">							}</span>
+<span class="fc" id="L324">						} catch (NullPointerException e) {</span>
+<span class="fc" id="L325">							transicionActual.setInforme(false);</span>
+<span class="fc" id="L326">						}</span>
+<span class="fc" id="L327">						procesoActual.addTransicion(transicionActual);</span>
+					}
+				}
+<span class="fc" id="L330">				this.procesos.add(procesoActual);</span>
+			}
+		}
+<span class="fc" id="L333">	}</span>
+	/**
+	 * Abre un archivo XML para escritura o lectura.
+	 * @param filePath El path del archivo que se desea abrir.
+	 * @return instancia de Document con el para parsear el archivo.
+	 */
+	private Document abrirArchivoProcesosXML(final String filePath) {
+<span class="fc" id="L340">        File xmlFile = null;</span>
+<span class="fc" id="L341">        final DocumentBuilderFactory dbFactory =</span>
+        		DocumentBuilderFactory.newInstance();
+<span class="fc" id="L343">        DocumentBuilder dBuilder = null;</span>
+<span class="fc" id="L344">        Document doc = null;</span>
+        try {
+<span class="fc" id="L346">        	xmlFile = new File(filePath);</span>
+<span class="fc" id="L347">            dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="fc" id="L348">            doc = dBuilder.parse(xmlFile);</span>
+
+<span class="nc" id="L350">        } catch (java.io.FileNotFoundException fe) {</span>
+<span class="nc" id="L351">        	fe.printStackTrace(); </span>
+        }
+<span class="nc" id="L353">        catch (SAXException | ParserConfigurationException</span>
+        		| IOException e1) {
+<span class="nc" id="L355">            e1.printStackTrace();</span>
+<span class="pc" id="L356">        }</span>
+<span class="fc" id="L357">        doc.getDocumentElement().normalize();</span>
+<span class="fc" id="L358">		return doc;</span>
+	}
+
+	/**
+	 * Crea un archivo XML para escritura o lectura, agregando los datos
+	 * minimos de un archivo XML que describa procesos de una red de Petri.
+	 * @param filePath El path del archivo que se desea abrir.
+	 * @return instancia de Document con el para parsear el archivo.
+	 */
+	public static Document crearArchivoProcesosXML(final String filePath) {
+<span class="fc" id="L368">        File xmlFile = null;</span>
+<span class="fc" id="L369">        final DocumentBuilderFactory dbFactory =</span>
+        		DocumentBuilderFactory.newInstance();
+<span class="fc" id="L371">        DocumentBuilder dBuilder = null;</span>
+<span class="fc" id="L372">        Document doc = null;</span>
+<span class="fc" id="L373">        BufferedWriter bw = null;</span>
+        try {
+<span class="fc" id="L375">        	xmlFile = new File(filePath);</span>
+<span class="fc" id="L376">        	xmlFile.createNewFile();</span>
+
+<span class="fc" id="L378">			bw = new BufferedWriter(new FileWriter(xmlFile));</span>
+<span class="fc" id="L379">			bw.write(CABECERAXML);</span>
+<span class="nc" id="L380">		} catch (java.io.IOException e) {</span>
+<span class="nc" id="L381">			e.printStackTrace();</span>
+		} finally {
+<span class="nc" id="L383">			try {</span>
+<span class="pc" id="L384">				bw.close();</span>
+<span class="nc" id="L385">			} catch (IOException e2) {</span>
+<span class="nc" id="L386">				e2.printStackTrace();</span>
+<span class="pc" id="L387">			}</span>
+<span class="nc" id="L388">		}</span>
+        try {
+<span class="fc" id="L390">        	dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="fc" id="L391">        	doc = dBuilder.parse(xmlFile);</span>
+<span class="fc" id="L392">	        doc.getDocumentElement().normalize();</span>
+<span class="nc" id="L393">        } catch (SAXException | ParserConfigurationException</span>
+        		| IOException e2) {
+<span class="nc" id="L395">        	e2.printStackTrace();</span>
+<span class="fc" id="L396">        }</span>
+<span class="fc" id="L397">		return doc;</span>
+	}
+
+	/**
+	 * Guarda los datos establecidos en una instancia Document en un archivo
+	 * cuyo path sera xmlFilePAth.
+	 * @param doc el Document con datos a guardar.
+	 * @param xmlFilePath path del archivo.
+	 */
+	private void guardarDatosArchivoProcesosXML(final Document doc,
+			final String xmlFilePath) {
+		try {
+<span class="fc" id="L409">			doc.getDocumentElement().normalize();</span>
+<span class="fc" id="L410">	        final TransformerFactory transformerFactory =</span>
+	        		TransformerFactory.newInstance();
+	     // añadimos sangrado y la cabecera de XML
+<span class="fc" id="L413">	        transformerFactory.setAttribute(&quot;indent-number&quot;, new Integer(3));</span>
+<span class="fc" id="L414">	        final Transformer transformer = transformerFactory.newTransformer();</span>
+<span class="fc" id="L415">	        transformer.setOutputProperty(</span>
+	        		&quot;{http://xml.apache.org/xslt}indent-amount&quot;, &quot;2&quot;);
+<span class="fc" id="L417">	        final DOMSource source = new DOMSource(doc);</span>
+<span class="fc" id="L418">	        final StreamResult result = new StreamResult(new File(xmlFilePath));</span>
+<span class="fc" id="L419">	        transformer.setOutputProperty(OutputKeys.INDENT, &quot;yes&quot;);</span>
+<span class="fc" id="L420">	        transformer.transform(source, result);</span>
+<span class="nc" id="L421">	    } catch (TransformerException e1) {</span>
+<span class="nc" id="L422">	        e1.printStackTrace();</span>
+<span class="fc" id="L423">	    }</span>
+<span class="fc" id="L424">	}</span>
+
+	/**
+	 * Controla en el archivo XML de procesos si ya existe definido un proceso
+	 * con el id dado.
+	 * @param doc instancia de Document con la que se trabaja.
+	 * @param idProceso id del proceso que se desea buscar.
+	 * @return true si el proceso existe, false de lo contrario.
+	 */
+	private boolean existeProceso(final Document doc, final String idProceso) {
+<span class="fc" id="L434">		final NodeList nodosProcesos = doc.getElementsByTagName(&quot;process&quot;);</span>
+<span class="fc bfc" id="L435" title="All 2 branches covered.">		for (int i = 0; i &lt; nodosProcesos.getLength(); i = i + 1) {</span>
+<span class="fc" id="L436">			final Element proc = (Element) nodosProcesos.item(i);</span>
+<span class="pc bpc" id="L437" title="1 of 2 branches missed.">			if (proc.getAttribute(&quot;id&quot;).equals(idProceso)) {</span>
+<span class="nc" id="L438">				return true;</span>
+			}
+		}
+<span class="fc" id="L441">		return false;</span>
+	}
+
+	/**
+	 * Reempaza el archivo XML por uno nuevo con los datos dado por
+	 * procesos nuevos.
+	 * @param procesosNuevos nuevos datos.
+	 */
+	public void reemplazarArchivoXML(final ArrayList&lt;Proceso&gt; procesosNuevos) {
+		//piso el archivo viejo
+<span class="fc" id="L451">		ManejadorProcesos.crearArchivoProcesosXML(this.path);</span>
+		//agrego los procesos al archivo.
+<span class="fc" id="L453">		final Iterator&lt;Proceso&gt; procIt = procesosNuevos.iterator();</span>
+<span class="fc bfc" id="L454" title="All 2 branches covered.">		while (procIt.hasNext()) {</span>
+<span class="fc" id="L455">			this.agregarProceso(procIt.next());</span>
+		}
+<span class="fc" id="L457">		this.leerProcesosDesdeXML(this.path);</span>
+<span class="fc" id="L458">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

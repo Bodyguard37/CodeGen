@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GenerarCodigoJava.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.generacionCodigo</a> &gt; <span class="el_source">GenerarCodigoJava.java</span></div><h1>GenerarCodigoJava.java</h1><pre class="source lang-java linenums">/**
+ *
+ */
+package unc.fcefyn.lac.tesisCaroFurey.generacionCodigo;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.Iterator;
+
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.AbstractHerramientaPN;
+import unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorProcesos.Proceso;
+
+/**
+ * Clase Generación de Codigo en Java. Se encarga de crear la estructura
+ * de directorios del código generado, copiar la librería y generar los archivos
+ * de configuración del procesador virtual.
+ * Como su nombre lo indica, el código generado es en lenguage Java, y el resultado
+ * obtenido es un ``proyecto'' con el código de todas las clases y
+ * los recursos necesarios para su ejecución.		  
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+
+public class GenerarCodigoJava implements GeneradorCodigo {
+	/**
+	 * Nombre de archivo para la matriz de incidencia.
+	 */
+	private static final String INCIDENCIA = &quot;incidencia&quot;;
+	/**
+	 * Nombre de archivo para el marcado inicial.
+	 */
+	private static final String MARCADO = &quot;marcado&quot;;
+	/**
+	 * Nombre de archivo para para la matriz de relaciones.
+	 */
+	private static final String RELACION = &quot;relacion&quot;;
+	/**
+	 * Nombre de archivo para las cotas de plazas.
+	 */
+	private static final String COTAS = &quot;cotas&quot;;
+	/**
+	 * Nombre de archivo para los diparos automáticos.
+	 */
+	private static final String AUTOMATICOS = &quot;automaticos&quot;;
+	/**
+	 * Nombre de archivo para la matriz de prioridades.
+	 */
+	private static final String PRIORIDADES = &quot;prioridades&quot;;
+	/**
+	 * Nombre de archivo para la matriz de prioridades distribuidas.
+	 */
+	private static final String PRIORIDADESDISTRIBUIDAS =
+			&quot;prioridadesDistribuidas&quot;;
+	/**
+	 * Nombre de archivo para las transiciones sin informe.
+	 */
+	private static final String SININFORME = &quot;sinInforme&quot;;
+
+	/**
+	 * Constructor.
+	 */
+<span class="fc" id="L67">	public GenerarCodigoJava() {</span>
+<span class="fc" id="L68">	}</span>
+	/**
+	 * Genera código fuente en lenguaje Java.
+	 * @param infoRed instancia de AbstractHerramientaPN uqe contenga
+	 * los analisis de la red para generar codigo.
+	 * @param pathArchivos path a donde guardar el código generado.
+	 */
+	public void generarCodigo(final AbstractHerramientaPN infoRed,
+			final String pathArchivos) {
+		//Genera archivos de configuracion de procesador de petri.
+<span class="fc" id="L78">		generarArchivosConfiguracion(infoRed, pathArchivos);</span>
+
+		//Genera el codigo
+<span class="fc" id="L81">		final String pathCodigo = pathArchivos + &quot;\\src&quot;;</span>
+<span class="fc" id="L82">		final File folderCodigo = new File(pathCodigo);</span>
+<span class="fc" id="L83">		folderCodigo.mkdirs();</span>
+<span class="fc" id="L84">		final String pathMain =  pathArchivos + &quot;\\src&quot; + &quot;\\main&quot;;</span>
+<span class="fc" id="L85">		final File folderMain = new File(pathMain);</span>
+<span class="fc" id="L86">		folderMain.mkdirs();</span>
+
+		//primero genera la clase Main
+<span class="fc" id="L89">		new GeneradorMainJava(pathMain, infoRed,</span>
+				pathArchivos + &quot;\\archivosConfiguracion\\config.txt&quot;);
+		//luego se generan los hilos
+
+<span class="fc" id="L93">		final String pathProcesos =  pathArchivos + &quot;\\src&quot; + &quot;\\procesos&quot;;</span>
+<span class="fc" id="L94">		final File folderProcesos = new File(pathProcesos);</span>
+<span class="fc" id="L95">		folderProcesos.mkdirs();</span>
+<span class="fc" id="L96">		final Iterator&lt;Proceso&gt; it = infoRed.getProcesos().iterator();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		while (it.hasNext()) {</span>
+<span class="fc" id="L98">			final Proceso proc = it.next();</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">			if (proc.isRunnable()) {</span>
+				//Si el proceso es runnable, genera un hilo.
+<span class="fc" id="L101">				new GeneradorHilosJava(proc, infoRed, pathProcesos);</span>
+			} else {
+				//Si no es runnable, genera un recurso.
+<span class="fc" id="L104">				new GeneradorRecursosJava(proc, infoRed, pathProcesos);</span>
+			}
+<span class="fc" id="L106">		}</span>
+		//Se llama al metodo copiar para agregar en el directorio donde se
+		//generará el codigo al procesador PPNV.jar
+<span class="fc" id="L109">		final String sourceFile = &quot;.\\PPNV.jar&quot;;</span>
+<span class="fc" id="L110">		final String destinationFile = pathArchivos + &quot;\\PPNV.jar&quot;;</span>
+<span class="fc" id="L111">		copiar(sourceFile, destinationFile);</span>
+<span class="fc" id="L112">	}</span>
+	/**
+	 * Genera todos los archivos de configuración para el procesador de petri.
+	 * @param infoRed instancia de Herramienta red de petri con informacion
+	 * de la red.
+	 * @param pathArchivos path del proyecto.
+	 */
+	protected void generarArchivosConfiguracion(
+			final AbstractHerramientaPN infoRed,
+			final String pathArchivos) {
+<span class="fc" id="L122">		final String pathConfig = pathArchivos + &quot;\\archivosConfiguracion&quot;;</span>
+<span class="fc" id="L123">		final File folderConfig = new File(pathConfig);</span>
+<span class="fc" id="L124">		folderConfig.mkdirs();</span>
+		////Se genera la matriz de prioridades distribuidas con un vector nulo,
+		//por que no existen transiciones distribuidas.
+<span class="fc" id="L127">		generarVectorCero(1,</span>
+				pathConfig + &quot;\\&quot; + PRIORIDADESDISTRIBUIDAS + &quot;.txt&quot;,
+				&quot;\n&quot;);
+		//Matriz de incidencia
+<span class="fc" id="L131">		generarArchivoMatriz(infoRed.getMatrizIncidenciaPositiva(),</span>
+				infoRed.getMatrizIncidenciaNegativa(),
+				pathConfig + &quot;\\&quot; + INCIDENCIA + &quot;0.txt&quot;);
+		//Marcado Inicial
+<span class="fc" id="L135">		generarArchivoVectorVertical(infoRed.getMarcadoInicial(),</span>
+				pathConfig + &quot;\\&quot; + MARCADO + &quot;0.txt&quot;);
+		//Se genera la matriz de relaciones con un vector nulo, de modo que
+		//no existan relaciones.
+<span class="fc" id="L139">		generarVectorCero(infoRed.getMatrizIncidenciaPositiva()[0].length,</span>
+				pathConfig + &quot;\\&quot; + RELACION + &quot;0.txt&quot;,
+				&quot; &quot;);
+		//Se genera las cotas de plazas con un vector nulo, de modo que
+		//no existan limitaciones de tokens en las plazas.
+<span class="fc" id="L144">		generarVectorCero(infoRed.getMatrizIncidenciaPositiva().length,</span>
+				pathConfig + &quot;\\&quot; + COTAS + &quot;0.txt&quot;,
+				&quot;\n&quot;);
+		//Se genera el vector de disparos automaticos.
+<span class="fc" id="L148">		generarArchivoVectorVertical(infoRed.getVectorDisparosAtomaticos(),</span>
+				pathConfig + &quot;\\&quot; + AUTOMATICOS + &quot;0.txt&quot;);
+		//Se genera el vector de disparos sin informe.
+<span class="fc" id="L151">		generarArchivoVectorVertical(infoRed.getVectorDisparosSinInforme(),</span>
+				pathConfig + &quot;\\&quot; + SININFORME + &quot;0.txt&quot;);
+		//Se genera una matriz identidad de prioridades.
+<span class="fc" id="L154">		generarMatrizIdentidad(infoRed.getMatrizIncidenciaPositiva()[0].length,</span>
+				pathConfig + &quot;\\&quot; + PRIORIDADES + &quot;0.txt&quot;);
+		//Se genera el archivo de configuracion con los nombres del resto de los
+		//archivos.
+<span class="fc" id="L158">		generarArchivoConfig(pathConfig + &quot;\\config.txt&quot;);</span>
+<span class="fc" id="L159">	}</span>
+	/**
+	 * Generador del archivo matriz de configuración del procesador.
+	 * @param matrizPositiva matriz de incidencia positiva
+	 * @param matrizNegativa matriz de incidencia negativa
+	 * @param filePath path donde crear el archivo
+	 */
+	protected void generarArchivoMatriz(final int[][] matrizPositiva,
+		final int[][] matrizNegativa, final String filePath) {
+<span class="fc" id="L168">		File matrizFile = null;</span>
+<span class="fc" id="L169">		BufferedWriter bw = null;</span>
+        try {
+<span class="fc" id="L171">        	matrizFile = new File(filePath);</span>
+<span class="fc" id="L172">        	matrizFile.createNewFile();</span>
+<span class="fc" id="L173">        	bw = new BufferedWriter(new FileWriter(matrizFile));</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">			for (int f = 0; f &lt; matrizPositiva.length; f = f + 1) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">				for (int c = 0; c &lt; matrizPositiva[0].length; c = c + 1) {</span>
+<span class="fc" id="L176">					final int valor = matrizPositiva[f][c] - matrizNegativa[f][c];</span>
+<span class="fc" id="L177">					bw.write(String.valueOf(valor) + &quot; &quot;);</span>
+				}
+<span class="fc" id="L179">				bw.newLine();</span>
+			}
+<span class="fc" id="L181">        } catch (java.io.IOException e) {</span>
+<span class="fc" id="L182">			e.printStackTrace();</span>
+		} finally {
+<span class="nc" id="L184">			try {</span>
+<span class="pc" id="L185">				bw.close();</span>
+<span class="nc" id="L186">			} catch (IOException e1) {</span>
+<span class="nc" id="L187">				e1.printStackTrace();</span>
+<span class="pc" id="L188">			}</span>
+<span class="nc" id="L189">		}</span>
+<span class="fc" id="L190">	}</span>
+	/**
+	 * Crea un archivo cuyo path sera filePath con un vector vertical con los
+	 * valores definidos en valores.
+	 * @param valores vector con los valores.
+	 * @param filePath path del archivo a crear.
+	 */
+	protected void generarArchivoVectorVertical(final int[] valores, final String filePath) {
+<span class="fc" id="L198">		File marcadoFile = null;</span>
+<span class="fc" id="L199">		BufferedWriter bw = null;</span>
+        try {
+<span class="fc" id="L201">        	marcadoFile = new File(filePath);</span>
+<span class="fc" id="L202">        	marcadoFile.createNewFile();</span>
+<span class="fc" id="L203">			bw = new BufferedWriter(new FileWriter(marcadoFile));</span>
+
+<span class="fc bfc" id="L205" title="All 2 branches covered.">			for (int f = 0; f &lt; valores.length; f = f + 1) {</span>
+<span class="fc" id="L206">				final int valor = valores[f];</span>
+<span class="fc" id="L207">				bw.write(String.valueOf(valor));</span>
+<span class="fc" id="L208">				bw.newLine();</span>
+			}
+<span class="fc" id="L210">        } catch (java.io.IOException e) {</span>
+<span class="fc" id="L211">			e.printStackTrace();</span>
+		} finally {
+<span class="nc" id="L213">			try {</span>
+<span class="pc" id="L214">				bw.close();</span>
+<span class="nc" id="L215">			} catch (IOException e) {</span>
+<span class="nc" id="L216">				e.printStackTrace();</span>
+<span class="pc" id="L217">			}</span>
+<span class="nc" id="L218">		}</span>
+<span class="fc" id="L219">	}</span>
+	/**
+	 * Genera un vector con todos sus valores a cero.
+	 * @param length Longitud
+	 * @param filePath path del archivo a crear.
+	 * @param separador separador entre valores. Normalmente espacio blanco o
+	 * nueva linea.
+	 */
+	protected void generarVectorCero(final int length, final String filePath,
+			final String separador) {
+<span class="fc" id="L229">		File relacionesFile = null;</span>
+<span class="fc" id="L230">		BufferedWriter bw = null;</span>
+        try {
+<span class="fc" id="L232">        	relacionesFile = new File(filePath);</span>
+<span class="fc" id="L233">        	relacionesFile.createNewFile();</span>
+<span class="fc" id="L234">			bw = new BufferedWriter(new FileWriter(relacionesFile));</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">			for (int f = 0; f &lt; length; f = f + 1) {</span>
+<span class="fc" id="L236">				bw.write('0' + separador);</span>
+			}
+<span class="fc" id="L238">        } catch (java.io.IOException e) {</span>
+<span class="fc" id="L239">			e.printStackTrace();</span>
+		} finally {
+<span class="nc" id="L241">			try {</span>
+<span class="pc" id="L242">				bw.close();</span>
+<span class="nc" id="L243">			} catch (IOException e) {</span>
+<span class="nc" id="L244">				e.printStackTrace();</span>
+<span class="pc" id="L245">			}</span>
+<span class="nc" id="L246">		}</span>
+<span class="fc" id="L247">	}	</span>
+	/**
+	 * Generar matriz Identidad.
+	 * @param length Longitud
+	 * @param filePath path del archivo a crear.
+	 */
+	protected void generarMatrizIdentidad(final int length, final String filePath) {
+<span class="fc" id="L254">		File matrizFile = null;</span>
+<span class="fc" id="L255">		BufferedWriter bw = null;</span>
+        try {
+<span class="fc" id="L257">        	matrizFile = new File(filePath);</span>
+<span class="fc" id="L258">        	matrizFile.createNewFile();</span>
+<span class="fc" id="L259">			bw = new BufferedWriter(new FileWriter(matrizFile));</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">			for (int f = 0; f &lt; length; f = f + 1) {</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">				for (int c = 0; c &lt; length; c = c + 1) {</span>
+					final int valor;
+<span class="fc bfc" id="L263" title="All 2 branches covered.">					if (f == c) {</span>
+<span class="fc" id="L264">						valor = 1;</span>
+					} else {
+<span class="fc" id="L266">						valor = 0;</span>
+					}
+<span class="fc" id="L268">					bw.write(String.valueOf(valor) + &quot; &quot;);</span>
+				}
+<span class="fc" id="L270">				bw.newLine();</span>
+			}
+<span class="fc" id="L272">        } catch (java.io.IOException e) {</span>
+<span class="fc" id="L273">			e.printStackTrace();</span>
+		} finally {
+<span class="nc" id="L275">			try {</span>
+<span class="pc" id="L276">				bw.close();</span>
+<span class="nc" id="L277">			} catch (IOException e) {</span>
+<span class="nc" id="L278">				e.printStackTrace();</span>
+<span class="pc" id="L279">			}</span>
+<span class="nc" id="L280">		}</span>
+<span class="fc" id="L281">	}	</span>
+	/**
+	 * Generar archivo config.
+	 * @param filePath Path al archivo
+	 */
+	protected void generarArchivoConfig(final String filePath) {
+<span class="fc" id="L287">		File matrizFile = null;</span>
+<span class="fc" id="L288">		BufferedWriter bw = null;</span>
+        try {
+<span class="fc" id="L290">        	matrizFile = new File(filePath);</span>
+<span class="fc" id="L291">        	matrizFile.createNewFile();</span>
+<span class="fc" id="L292">			bw = new BufferedWriter(new FileWriter(matrizFile));</span>
+
+<span class="fc" id="L294">			bw.write(&quot;&lt;&quot; + INCIDENCIA + &quot;&gt;&quot;  + INCIDENCIA + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; + INCIDENCIA + &quot;&gt;&quot;);
+<span class="fc" id="L296">			bw.newLine();</span>
+<span class="fc" id="L297">			bw.write(&quot;&lt;&quot; +  MARCADO + &quot;&gt;&quot;  +  MARCADO + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; +  MARCADO + &quot;&gt;&quot;);
+<span class="fc" id="L299">			bw.newLine();</span>
+<span class="fc" id="L300">			bw.write(&quot;&lt;&quot; + COTAS + &quot;&gt;&quot;  + COTAS + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; + COTAS + &quot;&gt;&quot;);
+<span class="fc" id="L302">			bw.newLine();</span>
+<span class="fc" id="L303">			bw.write(&quot;&lt;&quot; + AUTOMATICOS + &quot;&gt;&quot;  + AUTOMATICOS + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; + AUTOMATICOS + &quot;&gt;&quot;);
+<span class="fc" id="L305">			bw.newLine();</span>
+<span class="fc" id="L306">			bw.write(&quot;&lt;&quot; + PRIORIDADES + &quot;&gt;&quot;  + PRIORIDADES + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; + PRIORIDADES + &quot;&gt;&quot;);
+<span class="fc" id="L308">			bw.newLine();</span>
+<span class="fc" id="L309">			bw.write(&quot;&lt;&quot; + PRIORIDADESDISTRIBUIDAS + &quot;&gt;&quot; +</span>
+					PRIORIDADESDISTRIBUIDAS + &quot;.txt&quot; +
+					&quot;&lt;/&quot; + PRIORIDADESDISTRIBUIDAS + &quot;&gt;&quot;);
+<span class="fc" id="L312">			bw.newLine();</span>
+<span class="fc" id="L313">			bw.write(&quot;&lt;&quot; + SININFORME + &quot;&gt;&quot;  + SININFORME + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; + SININFORME + &quot;&gt;&quot;);
+<span class="fc" id="L315">			bw.newLine();</span>
+<span class="fc" id="L316">			bw.write(&quot;&lt;&quot; + RELACION + &quot;&gt;&quot;  + RELACION + &quot;X.txt&quot; +</span>
+					&quot;&lt;/&quot; + RELACION + &quot;&gt;&quot;);
+<span class="fc" id="L318">        } catch (java.io.IOException e) {</span>
+<span class="fc" id="L319">			e.printStackTrace();</span>
+		} finally {
+<span class="nc" id="L321">			try {</span>
+<span class="pc" id="L322">				bw.close();</span>
+<span class="nc" id="L323">			} catch (IOException e) {</span>
+<span class="nc" id="L324">				e.printStackTrace();</span>
+<span class="pc" id="L325">			}</span>
+<span class="nc" id="L326">		}</span>
+<span class="fc" id="L327">	}</span>
+	/**
+	 * Copia un archivo desde sourceFile a destinationFile. Es usado para
+	 * copiar la libreria del procesador al proyecto generado junto con el
+	 * código de los procesos.
+	 * @param sourceFile path actual de donde se va a sacar el archivo
+	 * @param destinationFile path que el usuario defina para la generacion de 
+	 * codigo, donde se va a copiar el procesador
+	 */
+
+	protected void copiar(String sourceFile, String destinationFile) {
+	
+<span class="fc" id="L339">		final File destination = new File(destinationFile);</span>
+		try {
+<span class="fc" id="L341">			destination.createNewFile();</span>
+<span class="fc" id="L342">		} catch (IOException e1) {</span>
+<span class="fc" id="L343">			System.out.println(&quot;Error creando el nuevo archivo :&quot; + e1);</span>
+<span class="fc" id="L344">			e1.printStackTrace();</span>
+<span class="fc" id="L345">		}</span>
+		try {
+			FileInputStream is;
+<span class="fc" id="L348">			is = new FileInputStream(sourceFile);</span>
+<span class="fc" id="L349">			final FileOutputStream os = new FileOutputStream(destination);</span>
+<span class="fc" id="L350">		    final FileChannel srcChannel = is.getChannel();</span>
+<span class="fc" id="L351">		    final FileChannel dstChannel = os.getChannel();</span>
+<span class="fc" id="L352">		    dstChannel.transferFrom(srcChannel, 0, srcChannel.size());</span>
+<span class="fc" id="L353">		    is.close();</span>
+<span class="fc" id="L354">		    os.close();</span>
+<span class="fc" id="L355">		} catch (FileNotFoundException e) {</span>
+<span class="fc" id="L356">			System.out.println(&quot;Specified file not found :&quot; + e);</span>
+<span class="fc" id="L357">			e.printStackTrace();</span>
+<span class="nc" id="L358">		} catch (IOException e) {</span>
+<span class="nc" id="L359">			System.out.println(&quot;Error while copying file :&quot; + e);</span>
+<span class="nc" id="L360">			e.printStackTrace();</span>
+<span class="fc" id="L361">		}</span>
+<span class="fc" id="L362">	}		</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ExploradorArchivoGuardar.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.interfazGrafica</a> &gt; <span class="el_source">ExploradorArchivoGuardar.java</span></div><h1>ExploradorArchivoGuardar.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.interfazGrafica;
+
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+
+/**
+ * Abre una ventana de exploracion para crear un nuevo archivo de Red de Petri.
+ * @author Caro, Maria Florencia &amp; Furey, Ignacio
+ */
+public class ExploradorArchivoGuardar {
+	/**
+	 * Objeto JFileChooser, usado para abrir explorador.
+	 */
+	private JFileChooser chooser;
+	/**
+	 * Class constructor. Crea una nueva instancia de JFileChooser
+	 * y la configura.
+	 * @param titulo Titulo de la ventana de exploracion
+	 * @param formatoDescripcion Descripcion del formato del archivo
+	 * @param formatoExtension Formato del archivo
+	 */
+	public ExploradorArchivoGuardar(final String titulo,
+<span class="nc" id="L26">			final String formatoDescripcion, final String formatoExtension) {</span>
+		//Creamos selector de apertura
+<span class="nc" id="L28">		this.chooser = new JFileChooser();</span>
+
+		//Titulo que llevara la ventana
+<span class="nc" id="L31">		this.chooser.setDialogTitle(titulo);</span>
+		//Elegiremos archivos del directorio
+		//chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		//Agregamos un filtros de extensiones de Redes de Petri, unicamente PNML
+<span class="nc" id="L36">		this.chooser.setFileFilter(</span>
+				new FileNameExtensionFilter(
+						formatoDescripcion, formatoExtension));
+<span class="nc" id="L39">		this.chooser.setAcceptAllFileFilterUsed(false);</span>
+<span class="nc" id="L40">	}</span>
+	/**
+	 * Retorna el File seleccionado en el explorador.
+	 * @param extension TODO
+	 * @return archivo seleccionado.
+	 */
+	public File getFile(final String extension) {
+<span class="nc" id="L47">		File f = null;</span>
+		//analizamos la respuesta
+<span class="nc bnc" id="L49" title="All 4 branches missed.">		switch (this.chooser.showSaveDialog(null)) {</span>
+			case JFileChooser.APPROVE_OPTION:
+				//seleccionó guardar, guarda el archivo
+				//seleccionado en f
+<span class="nc" id="L53">		 		final File aux = this.chooser.getSelectedFile();</span>
+<span class="nc" id="L54">		 		f = new File(aux.getAbsolutePath() + extension);</span>
+<span class="nc" id="L55">		 		aux.delete();</span>
+<span class="nc" id="L56">		 		break;</span>
+			case JFileChooser.CANCEL_OPTION:
+				//selecciono cancelar o cerro la
+				//ventana, setea f en null
+<span class="nc" id="L60">				f = null;</span>
+<span class="nc" id="L61">				break;</span>
+
+			case JFileChooser.ERROR_OPTION:
+				//Llega aqui si sucede un error, setea f en null
+<span class="nc" id="L65">				f = null;</span>
+<span class="nc" id="L66">				break;</span>
+			default:
+				break;
+		}
+<span class="nc" id="L70">		return f;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

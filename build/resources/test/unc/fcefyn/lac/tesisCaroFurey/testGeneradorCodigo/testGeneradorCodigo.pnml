@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<pnml xmlns="http://www.laas.fr/tina/TPN.rng">
+ <net id="net1" type="http://www.laas.fr/tina/TPN.rng">
+  <toolspecific tool="Tina" version="3.1.0">
+  </toolspecific>
+   <name>
+    <text>Ejemplo2hilos</text>
+   </name>
+ <page id="page1-net1">
+  <place id="M1">
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="290" y="310"/>
+    <offset x="10" y="0" />
+   </graphics>
+  </place>
+  <place id="P1_E1">
+   <graphics>
+    <position x="490" y="130"/>
+    <offset x="10" y="0" />
+   </graphics>
+  </place>
+  <place id="P1_E2">
+   <graphics>
+    <position x="500" y="290"/>
+    <offset x="10" y="0" />
+   </graphics>
+  </place>
+  <place id="P1_E3">
+   <graphics>
+    <position x="500" y="450"/>
+    <offset x="10" y="0" />
+   </graphics>
+  </place>
+  <transition id="P1_PtaHno">
+   <name>
+    <text>&lt;Robot1,Maquina1&gt;</text>
+    <graphics>
+     <offset x="10" y="0" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="500" y="370"/>
+    <offset x="10" y="-10" />
+   </graphics>
+  </transition>
+  <transition id="P1_SalidaHno">
+   <name>
+    <text>&lt;Maquina1,N&gt;</text>
+    <graphics>
+     <offset x="10" y="-10" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="500" y="530"/>
+    <offset x="10" y="0" />
+   </graphics>
+  </transition>
+  <transition id="P1_disponible">
+   <name>
+    <text>&lt;A,Robot1&gt;</text>
+    <graphics>
+     <offset x="10" y="0" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="500" y="210"/>
+    <offset x="10" y="-10" />
+   </graphics>
+  </transition>
+  <place id="P2_E1">
+   <graphics>
+    <position x="140" y="130"/>
+    <offset x="-10" y="0" />
+   </graphics>
+  </place>
+  <place id="P2_E2">
+   <graphics>
+    <position x="140" y="290"/>
+    <offset x="-10" y="0" />
+   </graphics>
+  </place>
+  <place id="P2_E3">
+   <graphics>
+    <position x="140" y="450"/>
+    <offset x="-10" y="0" />
+   </graphics>
+  </place>
+  <place id="R1">
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="370" y="250"/>
+    <offset x="10" y="0" />
+   </graphics>
+  </place>
+  <place id="R2">
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="650" y="50"/>
+    <offset x="0" y="-10" />
+   </graphics>
+  </place>
+  <place id="R3">
+   <initialMarking>
+    <text>1</text>
+   </initialMarking>
+   <graphics>
+    <position x="30" y="50"/>
+    <offset x="0" y="-10" />
+   </graphics>
+  </place>
+  <transition id="t3">
+   <name>
+    <text>&lt;Robot1,Maquina1&gt;</text>
+    <graphics>
+     <offset x="10" y="-10" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="140" y="370"/>
+    <offset x="-10" y="0" />
+   </graphics>
+  </transition>
+  <transition id="t4">
+   <name>
+    <text>&lt;A,Robot1&gt;</text>
+    <graphics>
+     <offset x="10" y="-10" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="140" y="210"/>
+    <offset x="-10" y="0" />
+   </graphics>
+  </transition>
+  <transition id="t5">
+   <name>
+    <text>&lt;Maquina1,N&gt;</text>
+    <graphics>
+     <offset x="10" y="-10" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="140" y="530"/>
+    <offset x="-10" y="0" />
+   </graphics>
+  </transition>
+  <transition id="t6">
+   <name>
+    <text>&lt;A,N&gt;</text>
+    <graphics>
+     <offset x="10" y="0" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="140" y="70"/>
+    <offset x="0" y="0" />
+   </graphics>
+  </transition>
+  <transition id="t7">
+   <name>
+    <text>&lt;A,N&gt;</text>
+    <graphics>
+     <offset x="10" y="0" />
+    </graphics>
+   </name>
+   <graphics>
+    <position x="500" y="80"/>
+    <offset x="0" y="0" />
+   </graphics>
+  </transition>
+  <arc id="a0" source="P1_E1" target="P1_disponible">
+  </arc>
+  <arc id="a1" source="R3" target="t6">
+   <graphics>
+    <position x="54" y="30" />
+    <position x="140" y="38" />
+   </graphics>  </arc>
+  <arc id="a2" source="P1_disponible" target="P1_E2">
+  </arc>
+  <arc id="a3" source="P1_PtaHno" target="R1">
+   <graphics>
+    <position x="452" y="370" />
+    <position x="366" y="286" />
+   </graphics>  </arc>
+  <arc id="a4" source="P1_PtaHno" target="P1_E3">
+  </arc>
+  <arc id="a5" source="R1" target="P1_disponible">
+   <graphics>
+    <position x="366" y="210" />
+    <position x="472" y="178" />
+   </graphics>  </arc>
+  <arc id="a6" source="M1" target="P1_disponible">
+   <graphics>
+    <position x="282" y="222" />
+    <position x="480" y="158" />
+   </graphics>  </arc>
+  <arc id="a7" source="P2_E2" target="t3">
+  </arc>
+  <arc id="a8" source="P2_E3" target="t5">
+  </arc>
+  <arc id="a9" source="t5" target="M1">
+   <graphics>
+    <position x="212" y="530" />
+    <position x="266" y="370" />
+   </graphics>  </arc>
+  <arc id="a10" source="t4" target="P2_E2">
+  </arc>
+  <arc id="a11" source="P2_E1" target="t4">
+  </arc>
+  <arc id="a12" source="t3" target="R1">
+   <graphics>
+    <position x="268" y="394" />
+    <position x="346" y="298" />
+   </graphics>  </arc>
+  <arc id="a13" source="M1" target="t4">
+   <graphics>
+    <position x="278" y="246" />
+    <position x="172" y="162" />
+   </graphics>  </arc>
+  <arc id="a14" source="R1" target="t4">
+   <graphics>
+    <position x="350" y="166" />
+    <position x="156" y="170" />
+   </graphics>  </arc>
+  <arc id="a15" source="P1_E2" target="P1_PtaHno">
+  </arc>
+  <arc id="a16" source="R2" target="t7">
+   <graphics>
+    <position x="618" y="26" />
+    <position x="496" y="48" />
+   </graphics>  </arc>
+  <arc id="a17" source="t3" target="P2_E3">
+  </arc>
+  <arc id="a18" source="t6" target="P2_E1">
+  </arc>
+  <arc id="a19" source="t7" target="P1_E1">
+  </arc>
+  <arc id="a20" source="t4" target="R3">
+   <graphics>
+    <position x="120" y="258" />
+    <position x="30" y="106" />
+   </graphics>  </arc>
+  <arc id="a21" source="P1_disponible" target="R2">
+   <graphics>
+    <position x="524" y="270" />
+    <position x="658" y="146" />
+   </graphics>  </arc>
+  <arc id="a22" source="P1_E3" target="P1_SalidaHno">
+  </arc>
+  <arc id="a23" source="P1_SalidaHno" target="M1">
+   <graphics>
+    <position x="404" y="530" />
+    <position x="302" y="374" />
+   </graphics>  </arc>
+ </page>
+ </net>
+</pnml>

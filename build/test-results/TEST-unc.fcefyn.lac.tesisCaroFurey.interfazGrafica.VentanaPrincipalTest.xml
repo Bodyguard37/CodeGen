@@ -1,0 +1,29 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<testsuite name="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" tests="11" failures="0" errors="0" timestamp="2014-02-13T11:45:26" hostname="FUREYNAC" time="2.782">
+  <properties/>
+  <testcase name="testMatrizYMarcado" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.363"/>
+  <testcase name="testLeerResultados" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.248"/>
+  <testcase name="testVentanaPrincipal" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.31"/>
+  <testcase name="testSetActualPN" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.422"/>
+  <testcase name="testMostrarResultado" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.186"/>
+  <testcase name="testAnalisisAlcanzabilidad" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.187"/>
+  <testcase name="testEditarSimularPN" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.201"/>
+  <testcase name="testEscribirResultadosenArchivo" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.224"/>
+  <testcase name="testEscribirCabeceraPNML" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.209"/>
+  <testcase name="testLimpiarResultados" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.21"/>
+  <testcase name="testAnalisisEstructural" classname="unc.fcefyn.lac.tesisCaroFurey.interfazGrafica.VentanaPrincipalTest" time="0.216"/>
+  <system-out><![CDATA[
+
+
+
+
+
+
+
+
+
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

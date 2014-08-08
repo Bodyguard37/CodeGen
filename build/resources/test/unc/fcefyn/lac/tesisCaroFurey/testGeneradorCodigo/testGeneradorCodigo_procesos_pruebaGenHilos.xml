@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<definicionProcesos>
+  <net id="net1">
+    <name>
+      <text>nombre de red</text>
+    </name>
+    <process id="TestGeneracionHilo" runnable="true">
+      <transition id="t3">
+        <disparo>
+          <metodo>disparoExtraWhile</metodo>
+          <orden>C</orden>
+        </disparo>
+        <informe>
+          <metodo>informaExtraWhile</metodo>
+          <orden>D</orden>
+        </informe>
+      </transition>
+      <transition id="P1_PtaHno">
+        <disparo>
+          <metodo>disparoIntraWhile</metodo>
+          <orden>3</orden>
+        </disparo>
+        <informe>
+          <metodo>informaIntraWhile</metodo>
+          <orden>4</orden>
+        </informe>
+      </transition>
+      <transition id="t6">
+        <disparo>
+          <metodo>automaticoExtraWhile</metodo>
+          <orden>A</orden>
+        </disparo>
+        <informe>
+          <metodo>noInformaExtraWhile</metodo>
+          <orden>B</orden>
+        </informe>
+      </transition>
+      <transition id="t7">
+        <disparo>
+          <metodo>automaticoIntraWhile</metodo>
+          <orden>1</orden>
+        </disparo>
+        <informe>
+          <metodo>automaticoIntraWhile</metodo>
+          <orden>2</orden>
+        </informe>
+      </transition>
+    </process>
+  </net>
+</definicionProcesos>

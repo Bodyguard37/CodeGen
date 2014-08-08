@@ -1,0 +1,74 @@
+apply plugin:'application'
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+apply plugin: "jacoco"
+
+
+mainClassName = "unc.fcefyn.lac.tesisCaroFurey.main.Main"
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+version = '1.0'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        def orderedOutput = files(output.resourcesDir) + files(output.classesDir)
+    	runtimeClasspath = orderedOutput + (output - orderedOutput) + sourceSets.main.output + configurations.testRuntime
+    }
+}
+
+jar {
+  manifest {
+    attributes (
+      'Implementation-Title': 'Tesis - Caro - Furey', 
+      'Implementation-Version': version,
+      'Main-Class' : mainClassName,
+      'Class-Path': 'libs/',
+      'Created-By': 'jdk1.7.0_11 (Sun Microsystems Inc.)'
+  )}
+}
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+test {
+    systemProperties 'property': 'value'
+    ignoreFailures = true
+}
+
+repositories {
+    mavenCentral()
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+checkstyle {
+	ignoreFailures = true
+}
+
+findbugs {
+	ignoreFailures = true
+}
+
+pmd {
+	ignoreFailures = true
+}
+
+jacocoTestReport.dependsOn test

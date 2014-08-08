@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractElemento.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado</a> &gt; <span class="el_source">AbstractElemento.java</span></div><h1>AbstractElemento.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado;
+
+
+/**
+ * Clase utilizada para completar una instancia de MatrizIncidencia.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+public abstract class AbstractElemento {
+	/**
+	 * id de elemento.
+	 */
+	protected String id;
+	/**
+	 * Valor del elemento, depende del tipo de elemento. Puede ser un marcado
+	 * inicial para una plza, un peso de arco o nada en caso de transicion.
+	 */
+	protected Integer valorElemento;
+
+	/**
+	 * Class contructor.
+	 */
+<span class="fc" id="L22">	public AbstractElemento() {</span>
+<span class="fc" id="L23">		this.valorElemento = new Integer(0);</span>
+<span class="fc" id="L24">		this.reset();</span>
+<span class="fc" id="L25">	}</span>
+
+	/**
+	 * Define como debe agregarse este elemento de una red de petri a la matriz
+	 * de incidencia.
+	 * @param matriz Matriz a la cual se agregara el elmento.
+	 */
+	public abstract void agregarElementoAMatriz(
+			MatrizIncidenciaMarcadoInicial matriz);
+
+	/**
+	 * Establece los valores de source y target, solo debe implementarse
+	 * para elementos de tipo arco.
+	 * @param source string con el id del elemento source del arco.
+	 * @param target string con el id del elemento target del arco.
+	 */
+	public abstract void setSourceTarget(String source, String target) throws RuntimeException;
+
+	/**
+	 * Establece a null los valores de id y valorElemento.
+	 */
+	public void reset() {
+<span class="fc" id="L47">		this.id = null;</span>
+<span class="fc" id="L48">		this.valorElemento = Integer.valueOf(0);</span>
+<span class="fc" id="L49">	}</span>
+
+	/**
+	 * Setter de id.
+	 * @param idNuevo valor a establecer en id.
+	 */
+	public void setId(final String idNuevo) {
+<span class="fc" id="L56">		this.id = idNuevo;</span>
+<span class="fc" id="L57">	}</span>
+
+	/**
+	 * Setter de valorElemento.
+	 * @param valor valor a establecer en valorElemento.
+	 */
+	public void setValorElemento(final int valor) {
+<span class="fc" id="L64">		this.valorElemento = Integer.valueOf(valor);</span>
+<span class="fc" id="L65">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

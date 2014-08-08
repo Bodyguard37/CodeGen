@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FocusTraversalOnArray.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">org.eclipse.wb.swing</a> &gt; <span class="el_source">FocusTraversalOnArray.java</span></div><h1>FocusTraversalOnArray.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Copyright (c) 2011 Google, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Google, Inc. - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.wb.swing;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
+
+/**
+ * Cyclic focus traversal policy based on array of components.
+ * &lt;p&gt;
+ * This class may be freely distributed as part of any application or plugin.
+ * 
+ * @author scheglov_ke
+ */
+public class FocusTraversalOnArray extends FocusTraversalPolicy {
+	private final Component[] m_Components;
+	/////////////////////////////////////////
+	//
+	// Constructor
+	//
+	/////////////////////////////////////////
+<span class="fc" id="L31">	public FocusTraversalOnArray(Component[] components) {</span>
+<span class="fc" id="L32">		m_Components = components;</span>
+<span class="fc" id="L33">	}</span>
+	/////////////////////////////////////////
+	//
+	// Utilities
+	//
+	/////////////////////////////////////////
+	private int indexCycle(int index, int delta) {
+<span class="nc" id="L40">		int size = m_Components.length;</span>
+<span class="nc" id="L41">		int next = (index + delta + size) % size;</span>
+<span class="nc" id="L42">		return next;</span>
+	}
+	private Component cycle(Component currentComponent, int delta) {
+<span class="nc" id="L45">		int index = -1;</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">		loop : for (int i = 0; i &lt; m_Components.length; i++) {</span>
+<span class="nc" id="L47">			Component component = m_Components[i];</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">			for (Component c = currentComponent; c != null; c = c.getParent()) {</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">				if (component == c) {</span>
+<span class="nc" id="L50">					index = i;</span>
+<span class="nc" id="L51">					break loop;</span>
+				}
+			}
+		}
+		// try to find enabled component in &quot;delta&quot; direction
+<span class="nc" id="L56">		int initialIndex = index;</span>
+		while (true) {
+<span class="nc" id="L58">			int newIndex = indexCycle(index, delta);</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">			if (newIndex == initialIndex) {</span>
+<span class="nc" id="L60">				break;</span>
+			}
+<span class="nc" id="L62">			index = newIndex;</span>
+			//
+<span class="nc" id="L64">			Component component = m_Components[newIndex];</span>
+<span class="nc bnc" id="L65" title="All 6 branches missed.">			if (component.isEnabled() &amp;&amp; component.isVisible() &amp;&amp; component.isFocusable()) {</span>
+<span class="nc" id="L66">				return component;</span>
+			}
+<span class="nc" id="L68">		}</span>
+		// not found
+<span class="nc" id="L70">		return currentComponent;</span>
+	}
+	/////////////////////////////////////////
+	//
+	// FocusTraversalPolicy
+	//
+	/////////////////////////////////////////
+	public Component getComponentAfter(Container container, Component component) {
+<span class="nc" id="L78">		return cycle(component, 1);</span>
+	}
+	public Component getComponentBefore(Container container, Component component) {
+<span class="nc" id="L81">		return cycle(component, -1);</span>
+	}
+	public Component getFirstComponent(Container container) {
+<span class="fc" id="L84">		return m_Components[0];</span>
+	}
+	public Component getLastComponent(Container container) {
+<span class="nc" id="L87">		return m_Components[m_Components.length - 1];</span>
+	}
+	public Component getDefaultComponent(Container container) {
+<span class="fc" id="L90">		return getFirstComponent(container);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

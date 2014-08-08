@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MatrizIncidenciaMarcadoInicial.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tesis-Caro-Furey</a> &gt; <a href="index.html" class="el_package">unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado</a> &gt; <span class="el_source">MatrizIncidenciaMarcadoInicial.java</span></div><h1>MatrizIncidenciaMarcadoInicial.java</h1><pre class="source lang-java linenums">package unc.fcefyn.lac.tesisCaroFurey.herramientaPN.manejadorMatrizyMarcado;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * En esta clase estan contenidos todos los datos necesarios para obtener la
+ * matriz de incidencia de una red.
+ * Ademas, esta clase es capaz de armar la matriz de incidencia y marcado de
+ * una red a partir de Elementos de tipo Plaza, Transicion y Arco que se van
+ * &quot;agregando&quot; con sus caracteristicas.
+ * @author María Florencia Caro &amp; Ignacio Furey
+ */
+public class MatrizIncidenciaMarcadoInicial {
+	/**
+	 * Matriz de incidencia positiva. Pesos de arcos
+	 * de Transiciones a Plazas.
+	 */
+	private int[][] positiva;
+	/**
+	 * Matriz de incidencia negativa. Pesos de arcos
+	 * de Plazas a Transiciones.
+	 */
+	private int[][] negativa;
+	/**
+	 * Marcado inicial de las plazas.
+	 */
+	private int[] marcadoInicial;
+	/**
+	 * Plazas, String=key/idPlaza, Integer[0]=posicion fila en matriz,
+	 * Integer[1]=marcado de plaza.
+	 */
+	private HashMap&lt;String, Integer[]&gt; plazas;
+	/**
+	 * Transiciones, String=key/idTransicion, Integer=posicion columna
+	 * en matriz.
+	 */
+	private HashMap&lt;String, Integer&gt; transiciones;
+	/**
+	 * Arcos, String=key/idArco, String[0]= idSource, String[1]= idTarget,
+	 * String[2]=peso del arco.
+	 */
+	private HashMap&lt;String, String[]&gt; arcos;
+
+	/**
+	 * Contador para los numeros de transiciones agregados.
+	 */
+	private int numTransicion;
+	/**
+	 * Contador para los numeros de plazas agregados.
+	 */
+	private int numPlaza;
+	/**
+	 * Class contructor.
+	 */
+<span class="fc" id="L57">	public MatrizIncidenciaMarcadoInicial() {</span>
+<span class="fc" id="L58">		this.plazas = new HashMap&lt;String, Integer[]&gt;();</span>
+<span class="fc" id="L59">		this.transiciones = new HashMap&lt;String, Integer&gt;();</span>
+<span class="fc" id="L60">		this.arcos = new HashMap&lt;String, String[]&gt;();</span>
+<span class="fc" id="L61">		this.numTransicion = 0;</span>
+<span class="fc" id="L62">		this.numPlaza = 0;</span>
+<span class="fc" id="L63">	}</span>
+	/**
+	 * Arma un String con los valores de las matrices y el marcado inicial
+	 * de manera legible por personas.
+	 * @return La matriz y el marcado en formato String.
+	 */
+	public final String matrizYMarcadoComoString() {
+<span class="fc" id="L70">		String matrizYMarcado = new String(&quot;&quot;);</span>
+		//guarda matriz positiva
+<span class="fc" id="L72">		matrizYMarcado = matrizYMarcado.concat(&quot;Matriz positiva:\n&quot;);</span>
+		//plazas - filas
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		for (int f = 0; f &lt; this.plazas.size(); f = f + 1) {</span>
+<span class="fc" id="L75">			String fila = new String(&quot;&quot;);</span>
+			//transiciones - columnas
+<span class="fc bfc" id="L77" title="All 2 branches covered.">			for (int c = 0; c &lt; this.transiciones.size(); c = c + 1) {</span>
+<span class="fc" id="L78">				fila = fila + Integer.toString(this.positiva[f][c]) + &quot;\t&quot;;</span>
+			}
+<span class="fc" id="L80">			matrizYMarcado = matrizYMarcado.concat(fila + &quot;\n&quot;);</span>
+		}
+		//guarda matriz negativa
+<span class="fc" id="L83">		matrizYMarcado = matrizYMarcado.concat(&quot;\nMatriz negativa:\n&quot;);</span>
+		//plazas - filas
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		for (int f = 0; f &lt; this.plazas.size(); f = f + 1) {</span>
+<span class="fc" id="L86">			String fila = new String(&quot;&quot;);</span>
+			//trnasiciones - columnas
+<span class="fc bfc" id="L88" title="All 2 branches covered.">			for (int c = 0; c &lt; this.transiciones.size(); c = c + 1) {</span>
+<span class="fc" id="L89">				fila = fila + Integer.toString(this.negativa[f][c]) + &quot;\t&quot;;</span>
+			}
+<span class="fc" id="L91">			matrizYMarcado = matrizYMarcado.concat(fila + &quot;\n&quot;);</span>
+		}
+		//guarda marcado inicial
+<span class="fc" id="L94">		matrizYMarcado = matrizYMarcado.concat(&quot;\nMarcado inicial:\n&quot;);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for (int i = 0; i &lt; this.plazas.size(); i = i + 1) {</span>
+<span class="fc" id="L96">			matrizYMarcado = matrizYMarcado.concat(this.marcadoInicial[i] + &quot;\n&quot;);</span>
+		}
+<span class="fc" id="L98">		return matrizYMarcado;</span>
+	}
+
+	/**
+	 * Agrega un id de transicion y le asigna un numero de columna de la matriz.
+	 * @param idTransicion el id de transicion a agregar.
+	 */
+	public void agregarTransicion(final String idTransicion) {
+		//Se agrega en el Map de transiciones una nueva Key=idTransicion
+		//asociada a un Value= numero de transicion/columna de matriz.
+<span class="fc" id="L108">		this.transiciones.put(idTransicion, this.numTransicion);</span>
+		//incrementa el valor del contador de transiciones
+<span class="fc" id="L110">		this.numTransicion = this.numTransicion + 1;</span>
+<span class="fc" id="L111">	}</span>
+
+	/**
+	 * Agrega un id de plaza con su marcado inicial y le asigna un numero de
+	 * columna de la matriz.
+	 * @param idPlaza el id de la plaza a agregar
+	 * @param marcadoInicialNuevo marcado inicial de la plaza
+	 */
+	public void agregarPlaza(final String idPlaza, final int marcadoInicialNuevo) {
+		//Se agrega en el Map de plazas una nueva Key=idPlaza asociada a
+		//un Value= {numero de Plaza/fila de matriz, marcado inicial}.
+<span class="fc" id="L122">		this.plazas.put(idPlaza, new Integer[]{Integer.valueOf(this.numPlaza),</span>
+			Integer.valueOf(marcadoInicialNuevo), });
+		//incrementa el valor del contador de plazas
+<span class="fc" id="L125">		this.numPlaza = this.numPlaza + 1;</span>
+<span class="fc" id="L126">	}</span>
+
+	/**
+	 * Agrega un id de arco con los source, target y peso correspondientes y
+	 * le asigna un numero.
+	 * de columna de la matriz.
+	 * @param idArco el id del arco a agregar
+	 * @param idSource elemento source del arco
+	 * @param idTarget elemento target del arco
+	 * @param valorPeso peso del arco
+	 */
+	public void agregarArco(final String idArco, final String idSource, final String idTarget,
+			final String valorPeso) {
+		//Se agrega en el Map de arcos una nueva Key=idArco asociada a un
+		//Value= {idSource, idTarget, valor peso del arco}.
+<span class="fc" id="L141">		this.arcos.put(idArco, new String[]{idSource, idTarget, valorPeso});</span>
+<span class="fc" id="L142">	}</span>
+
+	/**
+	 * Metodo que completa la matriz de incidencia positiva y negativa y el
+	 * marcado inicial de una red segun los componentes que se cargaron hasta
+	 * el momento. Este metodo debe ser llamado una vez se termine de cargar
+	 * todos los compenentes de la red de petri de la que se desea obtener la
+	 * matriz.
+	 */
+	public void crearMatriz() {
+<span class="fc" id="L152">		this.positiva = new int[this.plazas.size()][this.transiciones.size()];</span>
+<span class="fc" id="L153">		this.negativa = new int[this.plazas.size()][this.transiciones.size()];</span>
+<span class="fc" id="L154">		this.marcadoInicial = new int [this.plazas.size()];</span>
+		//Pone a cero todos los valores de los arreglos
+<span class="fc bfc" id="L156" title="All 2 branches covered.">		for (int f = 0; f &lt; this.plazas.size(); f = f + 1) {</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">			for (int c = 0; c &lt; this.transiciones.size(); c = c + 1) {</span>
+<span class="fc" id="L158">				this.positiva[f][c] = 0;</span>
+<span class="fc" id="L159">				this.negativa[f][c] = 0;</span>
+			}
+<span class="fc" id="L161">			this.marcadoInicial[f] = 0;</span>
+		}
+
+		//En primer lugar, completamos el marcado inicial
+		//se crea un iterator con el HashMap de las plazas para poder recorrerlo
+<span class="fc" id="L166">		final Iterator&lt;Map.Entry&lt;String, Integer[]&gt;&gt; it1 = </span>
+				this.plazas.entrySet().iterator();
+		//siempre que haya un elemento disponible
+<span class="fc bfc" id="L169" title="All 2 branches covered.">		while (it1.hasNext()) {</span>
+			//obtiene proximo elemento de tipo &lt;String, Integer[]&gt; =
+			//&lt;idPlaza, {numero de Plaza/fila en matriz, 
+			//marcado inicial de plaza&gt;.
+<span class="fc" id="L173">			final Map.Entry&lt;String, Integer[]&gt; e1 = it1.next();</span>
+			//Guarda el marcado en el vector marcadoInicial, en la posicion
+			//indicada por numero de Plaza/fila en matriz.
+<span class="fc" id="L176">			this.marcadoInicial[ (e1.getValue()[0]).intValue() ] =</span>
+					(e1.getValue()[1]).intValue();
+<span class="fc" id="L178">		}</span>
+
+		//Luego se completan la matriz de incidencia positiva y negativa
+		//Se crea un iterador con el HashMap de los arcos par apoder recorrerlo
+<span class="fc" id="L182">		final Iterator&lt;Map.Entry&lt;String, String[]&gt;&gt; it2 = this.arcos.entrySet().iterator();</span>
+		//siempre que haya un elemento disponible
+<span class="fc bfc" id="L184" title="All 2 branches covered.">		while (it2.hasNext()) {</span>
+			//obtiene proximo elemento de tipo &lt;String, String[]&gt; =
+			//&lt;idArco, {idSource, idTarget, peso del arco}&gt;
+<span class="fc" id="L187">			final Map.Entry&lt;String, String[]&gt; e2 = it2.next();</span>
+			//Luego determina si el peso del arco debe ir en la matriz positiva,
+			//en caso que el idSource.
+			//coincida con una transicion, o en la matriz negativa, si el 
+			//idSource coincide con una plaza.
+<span class="fc bfc" id="L192" title="All 2 branches covered.">			if (this.transiciones.containsKey(e2.getValue()[0])) {</span>
+				//Si existe en transiciones una key con
+				//el valor de idSource, implica que el peso
+				//debe ir en la matriz positiva.
+
+				//FILA = numero de Plaza (posicion 0 del vector value del 
+				//HashMap plazas) de la plaza indicada por el idTarget del arco
+				//actual.
+<span class="fc" id="L200">				final int fila = this.plazas.get(e2.getValue()[1])[0].intValue();</span>
+				//COLUMNA = numero de transicion (value del HashMap 
+				//transiciones) de la transicion indicada por el idSource del 
+				//arco atual.
+<span class="fc" id="L204">				final int columna = this.transiciones.get(e2.getValue()[0]);</span>
+				//PESO = valor entero de la posicion 2 del vector value del
+				//arco actual
+<span class="fc" id="L207">				final int peso = Integer.parseInt(e2.getValue()[2]);</span>
+
+				//Con los ultimos valores, se carga la posicion de la matriz de
+				//incidencia positiva.
+<span class="fc" id="L211">				this.positiva[fila][columna] = peso;</span>
+<span class="fc" id="L212">			}</span>
+			else {
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">				if (this.plazas.containsKey(e2.getValue()[0])) {</span>
+					//Si existe en plazas una key con el valor de idSource,
+					//implica que el peso debe ir en la matriz negativa.
+
+					//FILA = numero de Plaza (posicion 0 del vector value del
+					//HashMap plazas) de la plaza indicada por el idSource del
+					//arco actual.
+<span class="fc" id="L221">					final int fila = this.plazas.get(e2.getValue()[0])[0].intValue();</span>
+					//COLUMNA = numero de transicion (value del HashMap
+					//transiciones) de la transicion indicada por el idTarget
+					//del arco atual
+<span class="fc" id="L225">					final int columna = this.transiciones.get(e2.getValue()[1]);</span>
+					//PESO = valor entero de la posicion 2 del vector value del
+					//arco actual.
+<span class="fc" id="L228">					final int peso = Integer.parseInt(e2.getValue()[2]);</span>
+
+					//Con los ultimos valores, se carga la posicion de la
+					//matriz de incidencia positiva.
+<span class="fc" id="L232">					this.negativa[fila][columna] = peso;</span>
+<span class="fc" id="L233">				}</span>
+				else {
+<span class="nc" id="L235">					System.out.println(&quot;no se encontro idSource: &quot; +</span>
+						e2.getValue()[0] + &quot;, del arco: &quot; + e2.getKey());
+				}
+			}
+<span class="fc" id="L239">		}</span>
+<span class="fc" id="L240">	}</span>
+	/**
+	 * Getter.
+	 * @return La matriz positiva de la red.
+	 */
+	public final int[][] getMatrizPositiva() {
+<span class="fc" id="L246">		return this.positiva;</span>
+	}
+	/**
+	 * Getter.
+	 * @return la matriz negativa de la red.
+	 */
+	public final int[][] getMatrizNegativa() {
+<span class="fc" id="L253">		return this.negativa;</span>
+	}
+	/**
+	 * Getter.
+	 * @return El marcado inicial de la red.
+	 */
+	public final int[] getMarcado() {
+<span class="fc" id="L260">		return this.marcadoInicial;</span>
+	}
+	/**
+	 * Getter.
+	 * @return the plazas
+	 */
+	public final HashMap&lt;String, Integer[]&gt; getPlazas() {
+<span class="nc" id="L267">		return this.plazas;</span>
+	}
+
+	/**
+	 * getter de transiciones.
+	 * @return the transiciones.
+	 */
+	public final HashMap&lt;String, Integer&gt; getTransiciones() {
+<span class="fc" id="L275">		return this.transiciones;</span>
+	}
+	/**
+	 * Imprime todas las transiciones, mostrando su  nombre y numero de columna.
+	 */
+	public void mostrarColumnasTransicion() {
+<span class="nc" id="L281">		final Iterator&lt;String&gt; tr = this.transiciones.keySet().iterator();</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">		while (tr.hasNext()) {</span>
+<span class="nc" id="L283">			final String tra = tr.next();</span>
+<span class="nc" id="L284">			System.out.println(</span>
+					&quot;Transicion: &quot; + tra + &quot; columna: &quot; +
+							this.transiciones.get(tra));
+<span class="nc" id="L287">		}</span>
+<span class="nc" id="L288">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>
